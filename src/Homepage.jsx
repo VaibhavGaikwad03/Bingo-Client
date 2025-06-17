@@ -7,9 +7,66 @@ import axios from "axios";
 
 export default function Homepage(){
     let[view , setView] = useState("Homepage");
-    let [siteUsers, setSiteUsers] = useState([]);
-    let [siteUsers1, setSiteUsers1] = useState([]);
     let [message , setMessage] = useState([]);
+    const [socket , setSocket] = useState(null);
+    const timestamp = new Date().toISOString();
+
+    useEffect(() => {
+      const newSocket = new WebSocket('ws://localhost:3001');
+    
+      newSocket.onopen = () => {
+        console.log("Connected to server");
+      };
+    
+      newSocket.onmessage = (event) => {
+        console.log("Received from Server:", event.data);
+        let parsedData = JSON.parse(event.data);
+        if(parsedData.message_type == "login_response"){
+          if(parsedData.status == "success" && parsedData.error_code == 0 && parsedData.user_id != -1){
+            console.log("Login Successfull");
+          }
+          else if(parsedData.status == "error"){
+            console.log("Error Logging in");
+            if(parsedData.error_code == 101){
+              console.log("Username does not Exist");
+            }
+            else if(parsedData.error_code == 102){
+              console.log("Incorrect Password");
+            }
+          }
+        }
+        else if(parsedData.message_type == "signup_response" ){
+          if(parsedData.status == "success" && parsedData.error_code == 0 && parsedData.user_id != -1){
+            console.log("Signup Successfull");
+          }
+          else if(parsedData.status == "error"){
+            console.log("Error Signing in");
+            if(parsedData.error_code == 201){
+              console.log("User already exists!");
+            }
+          }
+        }
+        
+      };
+    
+      
+      newSocket.onclose = () => {
+        console.log("Connection closed");
+      };
+    
+      newSocket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    
+      setSocket(newSocket);
+    
+      return () => {
+        if (newSocket.readyState === WebSocket.OPEN) {
+          newSocket.close();
+        }
+      };
+    }, []);
+    
 
     function clearMessage() {
         setTimeout(() => {
@@ -17,66 +74,35 @@ export default function Homepage(){
         }, 2000);
       }
 
-    function handleSignupFormSubmit(signupform){
-        let userFound = false;
-        siteUsers1.forEach((e,index) => {
-            if(signupform.email == e.email){
-                userFound = true;
-                setMessage("User Already Exists");
-                clearMessage();
-            }
-        });
 
-        if(!userFound){
-            async function addDataToServer1(siteUsers1){
-                let response = await axios.post(
-                    "http://localhost:3000/users1",
-                    signupform
-                );
-
-                let sUsers = [...siteUsers1];
-                sUsers.push(response.data);
-                setSiteUsers1(sUsers);
-            }
-            addDataToServer1(siteUsers1);
-            setMessage("Signed up successfully!..You can Login now");
-            clearMessage();
-        } else{
-            return;
+    function handleSignupFormSubmit(signupform) {
+      // console.log(signupform);
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        let newSigninform = {
+          message_type : "signup_request",
+          ...signupform ,
+          "timestamp" : timestamp
         }
+        socket.send(JSON.stringify(newSigninform));
+        console.log(newSigninform);
+      } else {
+        console.log("WebSocket not connected yet : " , socket.readyState);
+      }
     }
 
     function handleLoginFormSubmit(loginform) {
-    let userFound = false;
-    //console.log(signupform);
-    siteUsers.forEach((e, index) => {
-      if (loginform.username_email == e.username_email) {
-        userFound = true;
-        setMessage("User Already Exists");
-        clearMessage();
+      // console.log(loginform);
+      if (socket && socket.readyState === WebSocket.OPEN) {       
+        let newLoginform = {
+          message_type : "login_request",
+          ...loginform ,
+          "timestamp" : timestamp
+        }
+        socket.send(JSON.stringify(newLoginform));
+      } else {
+        console.log("WebSocket not connected yet : " , socket.readyState);
       }
-      
-    });
-    if (!userFound) {
-      async function addDataToServer(siteUsers) {
-        let response = await axios.post(
-          "http://localhost:3000/users",
-          loginform
-        );
-        
-        let sUsers = [...siteUsers];
-        sUsers.push(response.data);
-        console.log(sUsers);
-        setSiteUsers(sUsers);
-      }
-      addDataToServer(siteUsers);
-      setMessage("Login successfull!");
-      clearMessage();
-      
-    } else {
-      return;
     }
-  }
 
     function handleButtonSignup() {
         setView("signup");

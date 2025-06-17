@@ -79,7 +79,7 @@ export default function Login(props) {
                     <input
                       className="form-control border-0"
                       type="text"
-                      name="username_email"
+                      name="username"
                       onChange={handleTextChange}
                       placeholder="Enter Username / Email-id"
                       required

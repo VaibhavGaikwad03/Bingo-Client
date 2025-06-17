@@ -82,7 +82,7 @@ export default function Signup(props){
                       className="form-control border-0"
                       type="text"
                       onChange={handleTextChange}
-                      name="full_name"
+                      name="fullname"
                       placeholder="Enter your Full name"
                       required
                     />
@@ -116,7 +116,7 @@ export default function Signup(props){
                       className="form-control border-0"
                       type="tel"
                       onChange={handleTextChange}
-                      name="mobile"
+                      name="phone"
                       pattern="[0-9]{10}" 
                       maxLength="10"
                       placeholder="Mobile number"
@@ -125,17 +125,17 @@ export default function Signup(props){
 
                   <div className="mb-4 d-flex ps-5 ms-4 align-items-center me-1 fw-bold"><label className="m-1">
                     Gender : 
-                    <input onChange={handleTextChange} className="m-1" type="radio" name="gender" value="male" required />
+                    <input onChange={handleTextChange} className="m-1" type="radio" name="gender" value="M" required />
                     Male
                     </label>
                     <br />
                     <label className="m-1">
-                    <input type="radio" className="m-1" name="gender" value="female" />
+                    <input onChange={handleTextChange} type="radio" className="m-1" name="gender" value="F" />
                     Female
                     </label>
                     <br />
                     <label className="m-1">
-                    <input type="radio" className="m-1" name="gender" value="other" />
+                    <input onChange={handleTextChange} type="radio" className="m-1" name="gender" value="O" />
                      Other
                     </label>
                     </div>
