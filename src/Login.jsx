@@ -45,11 +45,11 @@ export default function Login(props) {
                 alt="chat logo"
                 style={{ width: "200px", marginBottom: "15px" }}
               />
-              <h2 className="mb-4">Chit Chat</h2>
-              <p className="text-center px-4">
+              <h2 className="mb-4 text-muted">Chit Chat</h2>
+              <p className="text-center px-4 text-muted">
                 <em>Share Your Smile with this world and Find Friends</em>
               </p>
-              <h4 className="mt-2"> 💌 Enjoy..!</h4>
+              <h4 className="mt-2 text-muted"> 💌 Enjoy..!</h4>
             </div>
   
             <div
@@ -59,15 +59,15 @@ export default function Login(props) {
               }}
             >
               <div
-                className="w-75 p-5"
-                style={{
-                  background:
-                    "linear-gradient(to bottom right, #2c3e50, #4ca1af)",
-                  backdropFilter: "blur(10px)",
-                  borderRadius: "20px",
-                  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-                  border: "1px solid rgba(255, 255, 255, 0.18)",
-                }}
+                className="w-75 p-5 form-container"
+                // style={{
+                //   background:
+                //     "linear-gradient(to bottom right, #2c3e50, #4ca1af)",
+                //   backdropFilter: "blur(10px)",
+                //   borderRadius: "20px",
+                //   boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                //   border: "1px solid rgba(255, 255, 255, 0.18)",   
+                // }}
               >
                 <h3 className="text-center text-primary mb-4">LOGIN</h3>
 
@@ -107,7 +107,7 @@ export default function Login(props) {
                   <div className="mt-3 text-center">
                     Don't have an account?{" "}
                     <a
-                      className="text-info text-decoration-underline fw-bold"
+                      className="text-primary text-decoration-underline fw-bold"
                       href="#"
                       onClick={handleButtonSignup}
                     >
@@ -122,4 +122,3 @@ export default function Login(props) {
       </>
     );
   }
-  
