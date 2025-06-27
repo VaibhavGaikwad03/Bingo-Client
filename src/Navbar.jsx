@@ -1,64 +1,92 @@
+import React, { useState, useEffect } from "react";
 import Dock from "./Dock";
-// import SplashCursor from "./SplashCursor";
+import { Link } from "react-router-dom";
 
 export default function Navbar(props) {
-  
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const items = [
     {
-      label: <span style={{ color: "black" }}>Home</span>,
-      onClick: () => alert("Home!"),
+      label: (
+        <Link
+          to="/"
+          style={{ color: "black", textDecoration: "none", textShadow: "none" }}
+        >
+          Home
+        </Link>
+      ),
+      onClick: () => {},
     },
     {
-      label: <span style={{ color: "black" }}>Login</span>,
-      onClick: props.onButtonLogin,
+      label: (
+        <Link
+          to="/login"
+          style={{ color: "black", textShadow: "none", textDecoration: "none" }}
+        >
+          Login
+        </Link>
+      ),
+      onClick: () => {},
     },
     {
-      label: <span style={{ color: "black" }}>Signup</span>,
-      onClick: props.onButtonSignup,
+      label: (
+        <Link
+          to="/signup"
+          style={{ color: "black", textShadow: "none", textDecoration: "none" }}
+        >
+          Signup
+        </Link>
+      ),
+      onClick: () => {},
     },
     {
-      label: <span style={{ color: "black" }}>About us</span>,
-      onClick: () => alert("About us!"),
+      label: (
+        <Link
+          to="/about_us"
+          style={{ color: "black", textShadow: "none", textDecoration: "none" }}
+        >
+          About us
+        </Link>
+      ),
+      onClick: () => {},
     },
   ];
 
   return (
-    <>
-      <nav
-        className="navbar p-4 navbar-expand-lg mb-4 mt-0"
-        style={{ position: "relative" }}
-      >
-        {/* <SplashCursor /> */}
-        <div className="container-fluid">
-
-          {/* Logo */}
-          <div className="d-flex col-3 justify-content-start p-0 ms-0">
-            <img
-              className="img-fluid mt-3"
-              src="./images/BingoLogo.png"
-              alt="chatlogo"
-              style={{
-                maxHeight: "130px",
-                filter: "drop-shadow(0 0 15px #ff00ff)",
-                animation: "floatLogo 4s ease-in-out infinite",
-              }}
-            />
-          </div>
-
-          {/* Dock Menu */}
-          <div
+    <nav
+      className="navbar pb-4 mt-3 p-2 navbar-expand-lg mb-4 fixed-top "
+      style={{ background: "#ffc0db" }}
+    >
+      <div className="container-fluid d-flex flex-wrap align-items-center justify-content-between">
+        <div className="p-0 m-0">
+          <img
+            className="img-fluid"
+            src="./images/BingoLogo.png"
+            alt="chatlogo"
             style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              paddingRight: "20px"
+              maxHeight: isMobile ? "60px" : "120px",
+              filter: "drop-shadow(0 0 15px #ff00ff)",
+              animation: "floatLogo 4s ease-in-out infinite",
             }}
-          >
-            <Dock items={items} panelHeight={48} baseItemSize={38} magnification={45} />
-          </div>
-
+          />
         </div>
-      </nav>
-    </>
+
+        <Dock
+          items={items}
+          panelHeight={isMobile ? 36 : 48}
+          baseItemSize={isMobile ? 30 : 38}
+          magnification={isMobile ? 35 : 45}
+        />
+      </div>
+    </nav>
   );
 }

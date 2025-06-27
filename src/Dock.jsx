@@ -1,15 +1,12 @@
-// Dock.jsx
 import React from "react";
+import "./Dock.css";
 
-const glowColor = "#ff006e"; // Dark pink glow
+const glowColor = "#ff006e"; 
 
 export default function Dock({ items, panelHeight, baseItemSize, magnification }) {
   return (
     <div
       style={{
-        position: "absolute",
-        top: "20px",
-        right: "50px",
         display: "flex",
         gap: "40px",
         padding: "20px",
@@ -18,6 +15,9 @@ export default function Dock({ items, panelHeight, baseItemSize, magnification }
         background: "rgba(255, 255, 255, 0.05)",
         boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
         border: "1px solid rgba(255, 255, 255, 0.18)",
+        flexWrap: "wrap",   // allow wrapping on mobile
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       {items.map((item, idx) => (
@@ -32,17 +32,17 @@ export default function Dock({ items, panelHeight, baseItemSize, magnification }
             color: "#ffffff",
             transition: "all 0.3s ease",
             fontSize: baseItemSize / 2,
-            boxShadow: `0 0 10px ${glowColor}`, // Initial pink glow
+            boxShadow: `0 0 10px ${glowColor}`,
             whiteSpace: "nowrap",
             minWidth: "80px",
           }}
           onMouseEnter={(e) => {
             e.target.style.transform = `scale(${1 + magnification / 100})`;
-            e.target.style.boxShadow = `0 0 20px ${glowColor}`; // Stronger on hover
+            e.target.style.boxShadow = `0 0 20px ${glowColor}`;
           }}
           onMouseLeave={(e) => {
             e.target.style.transform = "scale(1)";
-            e.target.style.boxShadow = `0 0 10px ${glowColor}`; // Back to normal
+            e.target.style.boxShadow = `0 0 10px ${glowColor}`;
           }}
         >
           {item.label}
