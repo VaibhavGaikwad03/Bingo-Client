@@ -33,7 +33,7 @@ function App() {
    useEffect(() => {
     console.log("in useEffect");
     // newSocket.current = new WebSocket("https://90f0-103-198-165-132.ngrok-free.app/");
-    newSocket.current = new WebSocket("ws://localhost:3001");
+    newSocket.current = new WebSocket("ws://localhost:2121");
     console.log("in useeffect ");
 
     newSocket.current.onopen = () => {

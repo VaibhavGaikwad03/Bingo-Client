@@ -118,7 +118,7 @@ const chatData = {
                   // onClick={() => handleSuggestionClick(user)}
                   style={{ cursor: "pointer" }}
                 >
-                  <h5 className="">{user.username}</h5>
+                  <h5 className="">{user.display_name}</h5>
                   <em className="fs-6 ms-1">{user.username}</em>
                 </li>
               ))}
