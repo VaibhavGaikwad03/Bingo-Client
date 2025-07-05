@@ -1,51 +1,59 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { MessageTypes } from "./Status_MessageTypes";
-
+import { FriendshipStatus } from "./FriendshipStatus";
+import { i } from "framer-motion/client";
 
 export default function Chatpage(props) {
-    let {socket} = props;
-    let {requestingUser} = props;
-    let {suggestions}= props;
+  let { socket } = props;
+  let { requestingUser } = props;
+   let {suggestions}= props;
   const navigate = useNavigate();
   let [chatMessage, setChatMessage] = useState({});
   let [searchView, setSearchView] = useState("icon");
+  let [friendRequest, setFriendRequest] = useState();
+
   // let [suggestions, setSuggestions] = useState([]);
+
   let [allUsers, setAllUsers] = useState([]);
 
-//   const mockSearchResponse = {
-//     message_type: "SEARCH_USER_RESPONSE",
-//     count: 2,
-//     users: [
-//       {
-//         user_id: "21",
-//         username: "vaibhav.g",
-//         username: "Vaibhav Gaikwad"
-//       },
-//       {
-//         user_id: "3",
-//         username: "test",
-//         username: "test user"
-//       },
-      
-//       {
-//         user_id: "36",
-//         username: "vibha",
-//         username: "vibhav user"
-//       },
-//       {
-//         user_id: "31",
-//         username: "vaibh",
-//         username: "Vaibhav"
-//       }
-//     ]
-//   };
+  // const mockSearchResponse = {
+  //   message_type: "SEARCH_USER_RESPONSE",
+  //   count: 2,
+  //   users: [
+  //     {
+  //       user_id: "21",
+  //       username: "vaibhav.g",
+  //       display_name: "Vaibhav Gaikwad",
+  //       friendship_status: "FRIEND",
+  //     },
+  //     {
+  //       user_id: "3",
+  //       username: "test",
+  //       display_name: "test user",
+  //       friendship_status: "FRIEND",
+  //     },
 
-//   useEffect(() => {
-//     if (mockSearchResponse.message_type === "SEARCH_USER_RESPONSE") {
-//       setAllUsers(mockSearchResponse.users);
-//     }
-//   }, []);
+  //     {
+  //       user_id: "36",
+  //       username: "vibha",
+  //       display_name: "vibhav user",
+  //       friendship_status: "PENDING",
+  //     },
+  //     {
+  //       user_id: "31",
+  //       username: "vaibh",
+  //       display_name: "Vaibhav",
+  //       friendship_status: "NOT_FRIEND",
+  //     },
+  //   ],
+  // };
+
+  // useEffect(() => {
+  //   if (mockSearchResponse.message_type === "SEARCH_USER_RESPONSE") {
+  //     setAllUsers(mockSearchResponse.users);
+  //   }
+  // }, []);
 
   function handleSearchIconButtonClick() {
     setSearchView("search_bar");
@@ -54,18 +62,19 @@ export default function Chatpage(props) {
   function handleTextChange(event) {
     const { name, value } = event.target;
     const updatedMessage = { ...chatMessage, [name]: value };
-setChatMessage(updatedMessage);
+    setChatMessage(updatedMessage);
 
-const chatData = {
-    message_type: MessageTypes.SEARCH_USER_REQUEST,
-    ...updatedMessage,
-    requested_by : requestingUser
-};
+    const chatData = {
+      message_type: MessageTypes.SEARCH_USER_REQUEST,
+      ...updatedMessage,
+      requested_by: requestingUser,
+    };
 
-      // console.log(chatData);
-      socket.send(JSON.stringify(chatData));
+    console.log(JSON.stringify(chatData));
+    socket.send(JSON.stringify(chatData));
 
-    // socket.send(JSON.stringify(chatMessage))
+    //comment the part under this
+    // socket.send(JSON.stringify(chatMessage));
     // if (value.trim() === "") {
     //   setSuggestions([]);
     // } else {
@@ -74,20 +83,28 @@ const chatData = {
     //   );
     //   setSuggestions(filtered);
     // }
+
   }
 
   // function handleSuggestionClick(user) {
   //   setChatMessage({
   //     ...chatMessage,
   //     username: user.username,
-  //     username: user.username,
-  //     user_id: user.user_id
+  //     display_name: user.display_name,
+  //     user_id: user.user_id,
   //   });
   //   setSuggestions([]);
   // }
 
+  // end of comment
+
+  function handleAddFriendButtonClick(user) {
+    alert("Friend Request Sent to " + user.display_name);
+    props.onAddFriendButtonClick(user);
+  }
+
   return (
-    <div className="position-fixed top-0 start-0 w-100 pt-4 p-3 ps-5 pe-5 z-3" >
+    <div className="position-fixed top-0 start-0 w-100 pt-4 p-3 ps-5 pe-5 z-3">
       {searchView == "icon" && (
         <div className="d-flex justify-content-end me-4">
           <i
@@ -109,17 +126,78 @@ const chatData = {
             onChange={handleTextChange}
             autoFocus
           />
+
+          <i
+            className="bi bi-x-circle-fill text-danger position-absolute"
+            style={{
+              top: "50%",
+              right: "15px",
+              transform: "translateY(-50%)",
+              fontSize: "1.5rem",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setChatMessage({});
+              // setSuggestions([]);
+              setSearchView("icon");
+            }}
+          ></i>
+
           {suggestions.length > 0 && (
             <ul className="list-group position-absolute w-100 mt-1 shadow ">
               {suggestions.map((user) => (
                 <li
                   key={user.user_id}
-                  className="list-group-item list-group-item-action"
+                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center "
                   // onClick={() => handleSuggestionClick(user)}
                   style={{ cursor: "pointer" }}
                 >
-                  <h5 className="">{user.display_name}</h5>
-                  <em className="fs-6 ms-1">{user.username}</em>
+                  <div>
+                    <h5 className="">{user.display_name}</h5>
+                    <em className="fs-6 ms-1">{user.username}</em>
+                  </div>
+
+                  {user.friendship_status == FriendshipStatus.NOT_FRIEND && (
+                    <img
+                      src="/images/add_friend.png"
+                      alt="add_friend"
+                      onClick={() => handleAddFriendButtonClick(user)}
+                      style={{
+                        width: "3.5rem",
+                        height: "3.5rem",
+                        cursor: "pointer",
+                        marginRight: "0.2rem",
+                      }}
+                    />
+                  )}
+
+                  {user.friendship_status == FriendshipStatus.PENDING && (
+                    <img
+                      src="/images/pending.png"
+                      alt="Pending"
+                      onClick={() => console.log("Pending clicked")}
+                      style={{
+                        width: "3.5rem",
+                        height: "3.5rem",
+                        cursor: "pointer",
+                        marginRight: "0.2rem",
+                      }}
+                    />
+                  )}
+
+                  {user.friendship_status === FriendshipStatus.FRIEND && (
+                    <img
+                      src="/images/friend.png"
+                      alt="friend"
+                      onClick={() => console.log("Already a friend")}
+                      style={{
+                        width: "3.5rem",
+                        height: "3.5rem",
+                        cursor: "pointer",
+                        marginRight: "0.2rem",
+                      }}
+                    />
+                  )}
                 </li>
               ))}
             </ul>
@@ -129,4 +207,3 @@ const chatData = {
     </div>
   );
 }
-

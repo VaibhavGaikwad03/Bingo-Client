@@ -5,6 +5,19 @@ body {
   background-color: rgb(255, 193, 228);   
 }
 
+.bg-light-green {
+  background-color: #d4edda !important; /* Light green */
+}
+
+.bg-light-grey {
+  background-color: #f2f2f2 !important; /* Light grey */
+}
+
+.bg-light-yellow {
+  background-color: #fff9db !important; /* Light yellow */
+}
+
+
 @keyframes floatLogo {
   0% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
