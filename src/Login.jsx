@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login(props) {
-  const { message } = props;
+  const { message, setMessage} = props;
   const [loginform, setLoginform] = useState({});
   const [usernameError, setUsernameError] = useState("");
   const navigate = useNavigate();
@@ -21,8 +21,15 @@ export default function Login(props) {
     props.onLoginFormSubmit(loginform);
   }
 
+  function clearMessage() 
+  {
+    setMessage("");
+  }
+
   function handleTextChange(eventOrName, value) {
     let name, inputValue;
+
+    clearMessage();
 
     if (typeof eventOrName === "object" && eventOrName.target) {
       name = eventOrName.target.name;

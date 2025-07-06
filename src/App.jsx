@@ -27,8 +27,9 @@ function App() {
   const navigate = useNavigate();
   const timestamp = new Date().toISOString();
 
-  function clearMessage() {
-    setTimeout(() => setMessage(""), 2000);
+  function clearMessage() 
+  {
+    setMessage("");
   }
 
   useEffect(() => {
@@ -57,7 +58,7 @@ function App() {
           setIsAuth(true);
           // setRequestingUser(parsedData);
           // localStorage.setItem("isAuth", "true");      //we will change it later
-          clearMessage();
+          //clearMessage();
           navigate("/chatpage");
         } else if (parsedData.status === Status.ERROR) {
           if (parsedData.error_code === LoginErrorCodes.USERNAME_NOT_FOUND) {
@@ -67,7 +68,7 @@ function App() {
           ) {
             setMessage("Incorrect Password");
           }
-          clearMessage();
+          //clearMessage();
         }
       } else if (parsedData.message_type === MessageTypes.SIGN_UP_RESPONSE) {
         if (parsedData.status === Status.SUCCESS) {
@@ -87,7 +88,7 @@ function App() {
           } else if (parsedData.error_code === SignupErrorCodes.PHONE_ALREADY_EXISTS) {
             setMessage("Phone already exists!");
           }
-          clearMessage();
+          //clearMessage();
         }
       } else if (parsedData.message_type === MessageTypes.CHAT_MESSAGE) {
         //check docs once
@@ -203,6 +204,7 @@ function App() {
             <Login
               onLoginFormSubmit={handleLoginFormSubmit}
               message={message}
+              setMessage={setMessage}
             />
           }
         />
