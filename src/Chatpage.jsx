@@ -1,17 +1,25 @@
-import { useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { MessageTypes } from "./Status_MessageTypes";
 import { FriendshipStatus } from "./FriendshipStatus";
 import { i } from "framer-motion/client";
+import SidebarFriendRequests from "./SidebarFriendRequests.jsx";
+import Profile from "./Profile.jsx";
+import SettingsSidebar from "./SettingsSidebar.jsx";
 
 export default function Chatpage(props) {
   let { socket } = props;
+  let { friendRequest } = props;
   let { requestingUser } = props;
-   let {suggestions}= props;
+  let { setFriendRequest } = props;
+  let { setSuggestions } = props;
+  let { suggestions } = props;
   const navigate = useNavigate();
   let [chatMessage, setChatMessage] = useState({});
   let [searchView, setSearchView] = useState("icon");
-  let [friendRequest, setFriendRequest] = useState();
+  // let [friendRequest, setFriendRequest] = useState();
+  let [showSidebar, setShowSidebar] = useState(false);
+  // let [showSettings, setShowSettings] = useState(false);
 
   // let [suggestions, setSuggestions] = useState([]);
 
@@ -61,6 +69,7 @@ export default function Chatpage(props) {
 
   function handleTextChange(event) {
     const { name, value } = event.target;
+
     const updatedMessage = { ...chatMessage, [name]: value };
     setChatMessage(updatedMessage);
 
@@ -72,31 +81,7 @@ export default function Chatpage(props) {
 
     console.log(JSON.stringify(chatData));
     socket.send(JSON.stringify(chatData));
-
-    //comment the part under this
-    // socket.send(JSON.stringify(chatMessage));
-    // if (value.trim() === "") {
-    //   setSuggestions([]);
-    // } else {
-    //   const filtered = allUsers.filter((user) =>
-    //     user.username.toLowerCase().startsWith(value.toLowerCase())
-    //   );
-    //   setSuggestions(filtered);
-    // }
-
   }
-
-  // function handleSuggestionClick(user) {
-  //   setChatMessage({
-  //     ...chatMessage,
-  //     username: user.username,
-  //     display_name: user.display_name,
-  //     user_id: user.user_id,
-  //   });
-  //   setSuggestions([]);
-  // }
-
-  // end of comment
 
   function handleAddFriendButtonClick(user) {
     alert("Friend Request Sent to " + user.display_name);
@@ -104,13 +89,51 @@ export default function Chatpage(props) {
   }
 
   return (
-    <div className="position-fixed top-0 start-0 w-100 pt-4 p-3 ps-5 pe-5 z-3">
+    <div className="position-fixed chatpg-container chatpg-white  top-0 start-0 w-100 pt-4 p-3 ps-5 pe-4 z-3">
       {searchView == "icon" && (
-        <div className="d-flex justify-content-end me-4">
-          <i
-            className="bi bi-search"
-            style={{ fontSize: "2rem", cursor: "pointer" }}
+        <div className="d-flex justify-content-end   me-3">
+          <img
+            src="/images/icons/search.png"
+            alt="search_logo"
+            className="me-4"
+            style={{ width: "40px", height: "40px", cursor: "pointer" }}
             onClick={handleSearchIconButtonClick}
+          />
+          <div
+            className="position-relative me-4"
+            style={{ width: "40px", height: "40px", cursor: "pointer" }}
+          >
+            <img
+              src="/images/icons/friend-request.png"
+              alt="friend_req_logo"
+              className="w-100 h-100"
+              onClick={() => setShowSidebar(true)}
+            />
+            {/* {friendRequest.length > 0 && ( */}
+              <span
+                className="position-absolute bottom-0 end-0 badge rounded-circle bg-danger"
+                style={{ transform: "translate(15%, 15%)" }}
+                onClick={() => setShowSidebar(true)}
+              >
+                {friendRequest.length}
+              </span>
+            {/* )} */}
+          </div>
+
+          <img
+            src="/images/icons/user.png"
+            alt="user_logo"
+            className="me-3"
+            style={{ width: "40px", height: "40px", cursor: "pointer" }}
+            onClick={() =>
+              // setSearchView("profile")
+              navigate("/profile")
+            }
+          />
+          <i
+            className="bi bi-three-dots-vertical mb-2 me-3"
+            style={{ fontSize: "2rem", cursor: "pointer" }}
+            onClick={() => setSearchView("settings")}
           ></i>
         </div>
       )}
@@ -120,6 +143,7 @@ export default function Chatpage(props) {
           <input
             type="text"
             name="username"
+            autoComplete="off"
             className="form-control form-control-lg"
             placeholder="Search username"
             value={chatMessage.username || ""}
@@ -138,13 +162,13 @@ export default function Chatpage(props) {
             }}
             onClick={() => {
               setChatMessage({});
-              // setSuggestions([]);
+              setSuggestions([]);
               setSearchView("icon");
             }}
           ></i>
 
           {suggestions.length > 0 && (
-            <ul className="list-group position-absolute w-100 mt-1 shadow ">
+            <ul className="suggestion-list list-group position-absolute w-100 mt-1 shadow">
               {suggestions.map((user) => (
                 <li
                   key={user.user_id}
@@ -159,43 +183,28 @@ export default function Chatpage(props) {
 
                   {user.friendship_status == FriendshipStatus.NOT_FRIEND && (
                     <img
-                      src="/images/add_friend.png"
+                      src="/images/icons/add_friend.png"
                       alt="add_friend"
                       onClick={() => handleAddFriendButtonClick(user)}
-                      style={{
-                        width: "3.5rem",
-                        height: "3.5rem",
-                        cursor: "pointer",
-                        marginRight: "0.2rem",
-                      }}
+                      className="chatpage-icon"
                     />
                   )}
 
                   {user.friendship_status == FriendshipStatus.PENDING && (
                     <img
-                      src="/images/pending.png"
+                      src="/images/icons/pending.png"
                       alt="Pending"
                       onClick={() => console.log("Pending clicked")}
-                      style={{
-                        width: "3.5rem",
-                        height: "3.5rem",
-                        cursor: "pointer",
-                        marginRight: "0.2rem",
-                      }}
+                      className="chatpage-icon"
                     />
                   )}
 
                   {user.friendship_status === FriendshipStatus.FRIEND && (
                     <img
-                      src="/images/friend.png"
+                      src="/images/icons/friend.png"
                       alt="friend"
                       onClick={() => console.log("Already a friend")}
-                      style={{
-                        width: "3.5rem",
-                        height: "3.5rem",
-                        cursor: "pointer",
-                        marginRight: "0.2rem",
-                      }}
+                      className="chatpage-icon"
                     />
                   )}
                 </li>
@@ -203,6 +212,26 @@ export default function Chatpage(props) {
             </ul>
           )}
         </div>
+      )}
+
+      {showSidebar && (
+        <SidebarFriendRequests
+          setShowSidebar={setShowSidebar}
+          setFriendRequest={setFriendRequest}
+          friendRequest={friendRequest}
+          socket={socket}
+          onAccept={(user) => console.log("Accepted:", user)}
+          onDecline={(user) => console.log("Declined:", user)}
+        />
+      )}
+
+      {/* <Routes>
+      <Route path="/" element={<Chatpage />} />
+      <Route path="/profile" element={<Profile />} />
+      </Routes> */}
+
+      {searchView == "settings" && (
+        <SettingsSidebar onClose={() => setSearchView("icon")} />
       )}
     </div>
   );

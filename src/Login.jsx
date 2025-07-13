@@ -2,13 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login(props) {
-  const { message, setMessage} = props;
+  const { message, setMessage } = props;
   const [loginform, setLoginform] = useState({});
   const [usernameError, setUsernameError] = useState("");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleButtonCancel() {
     navigate("/");
+  }
+
+  function clearMessage() {
+    setMessage("");
   }
 
   function handleButtonSignup() {
@@ -21,23 +26,16 @@ export default function Login(props) {
     props.onLoginFormSubmit(loginform);
   }
 
-  function clearMessage() 
-  {
-    setMessage("");
-  }
-
   function handleTextChange(eventOrName, value) {
     let name, inputValue;
-
     clearMessage();
-
     if (typeof eventOrName === "object" && eventOrName.target) {
       name = eventOrName.target.name;
       inputValue = eventOrName.target.value;
     } else {
       name = eventOrName;
       inputValue = value;
-    }  
+    }
 
     if (name === "username") {
       let newValue = "";
@@ -112,20 +110,21 @@ export default function Login(props) {
                 <div className="d-flex align-items-center border-bottom ">
                   <i className="bi bi-person-badge me-3 fs-4"></i>
                   <input
-                className="form-control border-0 mb-2"
-                type="text"
-                name="username"
-                value={loginform.username || ""}
-                onChange={handleTextChange}
-                placeholder="Username"
-                required
-              />
-            </div>
-            {usernameError && (
-              <div className="ms-5 text-danger">
-                <em>{usernameError}</em>
-              </div>
-            )}
+                    className="form-control border-0 mb-2"
+                    type="text"
+                    name="username"
+                    autoComplete="off"
+                    value={loginform.username || ""}
+                    onChange={handleTextChange}
+                    placeholder="Username"
+                    required
+                  />
+                </div>
+                {usernameError && (
+                  <div className="ms-5 text-danger">
+                    <em>{usernameError}</em>
+                  </div>
+                )}
                 {message === "Username does not Exist" && !usernameError && (
                   <div className="ms-5 text-danger">
                     <em>{message}</em>
@@ -134,17 +133,30 @@ export default function Login(props) {
               </div>
 
               <div className="pb-1 mb-3">
-                <div className="d-flex align-items-center border-bottom">
+                <div className="d-flex align-items-center border-bottom position-relative w-100">
                   <i className="bi bi-lock-fill me-3 fs-4"></i>
                   <input
                     className="form-control border-0 mb-2"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="off"
                     name="password"
                     onChange={handleTextChange}
                     placeholder="Enter Password"
                     required
                   />
+                  <i
+                    className={`bi ${
+                      showPassword ? "bi-eye" : "bi-eye-slash"
+                    } position-absolute end-0 me-3`}
+                    style={{
+                      cursor: "pointer",
+                      top: "40%",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  ></i>
                 </div>
+
                 {message === "Incorrect Password" && (
                   <div className="ms-5 text-danger">
                     <em>{message}</em>
@@ -183,6 +195,3 @@ export default function Login(props) {
     </div>
   );
 }
-
-
-

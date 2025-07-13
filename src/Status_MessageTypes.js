@@ -3,6 +3,11 @@ export const Status = {
     ERROR : 1
 }
 
+export const FriendRequestStatus = {
+    REJECTED : 0,
+    ACCEPTED : 1,
+}
+
 export const MessageTypes = {
     LOGIN_REQUEST : 101,
     LOGIN_RESPONSE : 102,
@@ -13,5 +18,9 @@ export const MessageTypes = {
     SEARCH_USER_REQUEST : 107,
     SEARCH_USER_RESPONSE : 108,
     FRIEND_REQ_REQUEST : 109,
-    FRIEND_REQ_RESPONSE : 110
+    FRIEND_REQ_RESPONSE : 110,
+    USER_PROFILE_INFORMATION : 111,
+    USER_FRIENDS_LIST : 112,
+    USER_PENDING_FRIEND_REQUESTS_LIST : 113,
+    USER_MESSAGE_HISTORY : 114
 }

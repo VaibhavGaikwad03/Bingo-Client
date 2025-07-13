@@ -5,13 +5,18 @@ import "./CustomDatePicker.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup(props) {
-  const { message } = props;
+  const { message, setMessage } = props;
   const [signupform, setSignupform] = useState({});
   const [usernameError, setUsernameError] = useState("");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleButtonCancel() {
     navigate("/");
+  }
+
+  function clearMessage() {
+    setMessage("");
   }
 
   function handleButtonLogin() {
@@ -34,14 +39,14 @@ export default function Signup(props) {
 
   function handleTextChange(eventOrName, value) {
     let name, inputValue;
-
+    clearMessage();
     if (typeof eventOrName === "object" && eventOrName.target) {
       name = eventOrName.target.name;
       inputValue = eventOrName.target.value;
     } else {
       name = eventOrName;
       inputValue = value;
-    }  
+    }
 
     if (name === "username") {
       let newValue = "";
@@ -130,6 +135,7 @@ export default function Signup(props) {
                 className="form-control border-0 mb-2"
                 type="text"
                 name="username"
+                autoComplete="off"
                 value={signupform.username || ""}
                 onChange={handleTextChange}
                 placeholder="Username"
@@ -152,12 +158,22 @@ export default function Signup(props) {
             <i className="bi bi-lock-fill me-3 fs-4"></i>
             <input
               className="form-control border-0"
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
+              autoComplete="off"
               onChange={handleTextChange}
               placeholder="Password"
               required
             />
+            <i
+              className={`bi ${
+                showPassword ? "bi-eye" : "bi-eye-slash"
+              } position-absolute end-0 me-5`}
+              style={{
+                cursor: "pointer",
+              }}
+              onClick={() => setShowPassword(!showPassword)}
+            ></i>
           </div>
 
           <div className="mb-4 d-flex align-items-center border-bottom pb-2">
@@ -166,6 +182,7 @@ export default function Signup(props) {
               className="form-control border-0"
               type="text"
               name="fullname"
+              autoComplete="off"
               onChange={handleTextChange}
               placeholder="Enter your Full name"
               required
@@ -185,13 +202,11 @@ export default function Signup(props) {
               className="form-control border-0 w-100"
               calendarClassName="custom-calendar"
               dateFormat="yyyy-MM-dd"
-              maxDate={new Date()} 
+              maxDate={new Date()}
               showMonthDropdown
               showYearDropdown
               scrollableYearDropdown
               yearDropdownItemNumber={100}
-
-              
               required
             />
           </div>
@@ -203,6 +218,7 @@ export default function Signup(props) {
                 className="form-control border-0 mb-2"
                 type="email"
                 name="email"
+                autoComplete="off"
                 onChange={handleTextChange}
                 placeholder="Email-id"
                 required
@@ -222,6 +238,7 @@ export default function Signup(props) {
                 className="form-control border-0 mb-2"
                 type="tel"
                 name="phone"
+                autoComplete="off"
                 pattern="[0-9]{10}"
                 maxLength="10"
                 onChange={handleTextChange}
@@ -300,5 +317,3 @@ export default function Signup(props) {
     </div>
   );
 }
-
-

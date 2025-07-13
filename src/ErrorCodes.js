@@ -10,3 +10,7 @@ export const SignupErrorCodes = {
     EMAIL_ALREADY_EXISTS : 2002,
     PHONE_ALREADY_EXISTS : 2003
 }
+
+export const ErrorCodes = {  //generic
+    INVALID_USER_ID : -1   
+}
