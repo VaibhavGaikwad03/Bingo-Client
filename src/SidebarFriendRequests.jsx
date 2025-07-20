@@ -2,24 +2,26 @@ import { FriendRequestStatus, MessageTypes } from "./Status_MessageTypes";
 import { useState } from "react";
 
 export default function SidebarFriendRequests(props) {
-  let { friendRequest, setFriendRequest, setShowSidebar, socket } = props;
+  let { friendReqList, setFriendRequest, setShowSidebar, socket } = props;
   let [requestView, setRequestView] = useState("friend_request");
   const timestamp = new Date().toISOString();
 
-  const handleAccept = (friendRequest) => {
-    console.log(friendRequest);
-    alert(`Accepted request from ${friendRequest.sender}`);
+  const handleAccept = (req) => {
+    console.log(req);
+    alert(`Accepted request from ${req.sender}`);
 
     setFriendRequest((prev) =>
-      prev.filter((u) => u.sender_id !== friendRequest.sender_id)
+      prev.filter((u) => u.sender_id !== req.sender_id)
     );
 
     const friend_req_status = {
       message_type: MessageTypes.FRIEND_REQ_RESPONSE,
-      sender_id: friendRequest.receiver_id,
-      sender: friendRequest.receiver,
-      receiver_id: friendRequest.sender_id,
-      receiver: friendRequest.sender,
+      sender_id: req.receiver_id,
+      sender: req.receiver,
+      name_of_sender: req.name_of_receiver,
+      receiver_id: req.sender_id,
+      receiver: req.sender,
+      name_of_receiver: req.name_of_sender,
       request_status: FriendRequestStatus.ACCEPTED,
       timestamp: timestamp,
     };
@@ -28,19 +30,20 @@ export default function SidebarFriendRequests(props) {
     socket.send(JSON.stringify(friend_req_status));
   };
 
-  const handleDecline = (friendRequest) => {
-    alert(`Declined request from ${friendRequest.sender}`);
-
+  const handleDecline = (req) => {
+    alert(`Declined request from ${req.sender}`);
     setFriendRequest((prev) =>
-      prev.filter((u) => u.sender_id !== friendRequest.sender_id)
+      prev.filter((u) => u.sender_id !== req.sender_id)
     );
 
     const friend_req_status = {
       message_type: MessageTypes.FRIEND_REQ_RESPONSE,
-      sender_id: friendRequest.receiver_id,
-      sender: friendRequest.receiver,
-      receiver_id: friendRequest.sender_id,
-      receiver: friendRequest.sender,
+      sender_id: req.receiver_id,
+      sender: req.receiver,
+      name_of_sender: req.name_of_receiver,
+      receiver_id: req.sender_id,
+      receiver: req.sender,
+      name_of_receiver: req.name_of_sender,
       request_status: FriendRequestStatus.REJECTED,
       timestamp: timestamp,
     };
@@ -67,12 +70,13 @@ export default function SidebarFriendRequests(props) {
 
           <h5 className="mt-4 mb-3">Friend Requests</h5>
 
-          {friendRequest && friendRequest.length > 0 ? (
-            friendRequest.map((req) => (
+          {friendReqList && friendReqList.length > 0 ? (
+            friendReqList.map((req, index) => (
               <div
-                key={req.sender_id}
+                key={index}
                 className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom"
               >
+                {console.log(friendReqList, "frinedreq")}
                 <img
                   src={req.profile_url || "/images/icons/user.png"}
                   alt="profile"
@@ -105,18 +109,24 @@ export default function SidebarFriendRequests(props) {
             <p className="text-muted mt-3">No pending requests.</p>
           )}
 
-          <img src="/images/icons/bell.png" alt="" className="bottom-bell" onClick={() => setRequestView("notification")} />
+          <img
+            src="/images/icons/bell.png"
+            alt=""
+            className="bottom-bell"
+            onClick={() => setRequestView("notification")}
+          />
         </>
       )}
 
-      {
-        requestView == "notification" && (
-          <>
-          <i className="bi bi-arrow-left" onClick={()=> setRequestView("friend_request")} style={{cursor: "pointer" , fontSize: "25px"}}></i>
-
-          </>
-        )
-      }
+      {requestView == "notification" && (
+        <>
+          <i
+            className="bi bi-arrow-left"
+            onClick={() => setRequestView("friend_request")}
+            style={{ cursor: "pointer", fontSize: "25px" }}
+          ></i>
+        </>
+      )}
     </div>
   );
 }

@@ -37,8 +37,8 @@ function App() {
 
   useEffect(() => {
     console.log("in useEffect");
-    newSocket.current = new WebSocket("https://076545487afa.ngrok-free.app/");
-    // newSocket.current = new WebSocket("ws://localhost:3001");
+    // newSocket.current = new WebSocket("https://163f0db516a0.ngrok-free.app/");
+    newSocket.current = new WebSocket("ws://localhost:2121");
     console.log("in useeffect ");
 
     newSocket.current.onopen = () => {
@@ -108,6 +108,12 @@ function App() {
         case MessageTypes.LOGOUT_RESPONSE:
           {
             console.log(parsedData,"Logout response");
+            if(parsedData.status == Status.SUCCESS){
+              navigate("/homepage")
+            }
+            else if(parsedData.status == Status.ERROR){
+              window.alert("Error occured while logging out")
+            }
           }
           break;
 
@@ -122,7 +128,7 @@ function App() {
 
         case MessageTypes.FRIEND_REQ_REQUEST:
           {
-            console.log(parsedData, "app");
+            console.log(parsedData, "friend req request");
 
             // setFriendRequest((prev) => {
             //   const isAlreadyThere = prev.some(
@@ -157,6 +163,7 @@ function App() {
         case MessageTypes.USER_PENDING_FRIEND_REQUESTS_LIST:
           {
             console.log(parsedData,"user pending friend reqs list");
+            setFriendRequest((prev) => [...prev, parsedData.pending_friend_requests_list]);
           }
           break;
 
@@ -220,21 +227,14 @@ function App() {
     }
   }
 
-  function handleAddFriendButtonClick(user) {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      const req = {
-        message_type: MessageTypes.FRIEND_REQ_REQUEST,
-        sender_id: currentUserId,
-        sender: requestingUser,
-        receiver_id: user.user_id,
-        receiver: user.username,
-        timestamp,
-      };
-      console.log(req, "req");
-      socket.send(JSON.stringify(req));
-    } else {
-      console.log("WebSocket not connected:", socket?.readyState);
-    }
+  function handleLogoutButtonClick(){
+    const logout_req = {
+      message_type: MessageTypes.LOGOUT_REQUEST,
+      user_id : currentUserId ,
+      username : requestingUser
+    };
+    console.log(logout_req);
+    socket.send(JSON.stringify(logout_req));
   }
 
   return (
@@ -303,7 +303,9 @@ function App() {
                 setSuggestions={setSuggestions}
                 requestingUser={requestingUser}
                 suggestions={suggestions}
-                onAddFriendButtonClick={handleAddFriendButtonClick}
+                currentUserId={currentUserId}
+                timestamp={timestamp}
+                onLogoutButtonClick = {handleLogoutButtonClick}
               />
             </RequireAuth>
           }
@@ -318,5 +320,4 @@ function App() {
     </>
   );
 }
-
 export default App;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Settings from "./Settings.jsx";
+import { MessageTypes } from "./Status_MessageTypes";
 import { useNavigate } from "react-router-dom";
 
 export default function SettingsSidebar({ onClose }) {
@@ -8,6 +9,10 @@ export default function SettingsSidebar({ onClose }) {
   function handleclosesettings() {
     navigate("/settings");
     setSettingsView("");
+  }
+
+  function handleLogoutButtonClick(){
+    props.onLogoutButtonClick();
   }
 
   return settingsView === "settings" ? (
@@ -40,6 +45,7 @@ export default function SettingsSidebar({ onClose }) {
               src="/images/icons/logout.png"
               alt="logout_logo"
               style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              onClick={handleLogoutButtonClick}
             />
             Logout
           </li>
@@ -48,7 +54,6 @@ export default function SettingsSidebar({ onClose }) {
 
       {settingsView == "settings" && (
         <>
-          {/* Hide the right sidebar by NOT rendering anything except Settings */}
           <Settings
             onClose={handleclosesettings}
             // onClose={() => setSettingsView("")}
