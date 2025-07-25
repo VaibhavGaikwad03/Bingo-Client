@@ -10,59 +10,15 @@ import SettingsSidebar from "./SettingsSidebar.jsx";
 export default function Chatpage(props) {
   let { socket } = props;
   let { friendRequest } = props;
-  let { requestingUser } = props;
-  let { setFriendRequest ,currentUserId , timestamp} = props;
+  let { currentUsername } = props;
+  let { setFriendRequest ,currentUserId ,currentNameOfUser, timestamp} = props;
   let { setSuggestions } = props;
   let { suggestions } = props;
   const navigate = useNavigate();
   let [chatMessage, setChatMessage] = useState({});
   let [searchView, setSearchView] = useState("icon");
-  // let [friendRequest, setFriendRequest] = useState();
   let [showSidebar, setShowSidebar] = useState(false);
-  // let [showSettings, setShowSettings] = useState(false);
-  const friendReqList = friendRequest.flat();
-
-  // let [suggestions, setSuggestions] = useState([]);
-
-  let [allUsers, setAllUsers] = useState([]);
-
-  // const mockSearchResponse = {
-  //   message_type: "SEARCH_USER_RESPONSE",
-  //   count: 2,
-  //   users: [
-  //     {
-  //       user_id: "21",
-  //       username: "vaibhav.g",
-  //       display_name: "Vaibhav Gaikwad",
-  //       friendship_status: "FRIEND",
-  //     },
-  //     {
-  //       user_id: "3",
-  //       username: "test",
-  //       display_name: "test user",
-  //       friendship_status: "FRIEND",
-  //     },
-
-  //     {
-  //       user_id: "36",
-  //       username: "vibha",
-  //       display_name: "vibhav user",
-  //       friendship_status: "PENDING",
-  //     },
-  //     {
-  //       user_id: "31",
-  //       username: "vaibh",
-  //       display_name: "Vaibhav",
-  //       friendship_status: "NOT_FRIEND",
-  //     },
-  //   ],
-  // };
-
-  // useEffect(() => {
-  //   if (mockSearchResponse.message_type === "SEARCH_USER_RESPONSE") {
-  //     setAllUsers(mockSearchResponse.users);
-  //   }
-  // }, []);
+  // const friendReqList = friendRequest.flat();
 
   function handleSearchIconButtonClick() {
     setSearchView("search_bar");
@@ -72,12 +28,11 @@ export default function Chatpage(props) {
     const { name, value } = event.target;
 
     const updatedMessage = { ...chatMessage, [name]: value };
-    // setChatMessage(updatedMessage);
 
     const chatData = {
       message_type: MessageTypes.SEARCH_USER_REQUEST,
       ...updatedMessage,
-      requested_by: requestingUser,
+      requested_by: currentUsername,
     };
     setChatMessage(chatData);
 
@@ -91,28 +46,28 @@ export default function Chatpage(props) {
       const req = {
         message_type: MessageTypes.FRIEND_REQ_REQUEST,
         sender_id: currentUserId,
-        sender: requestingUser,
+        sender: currentUsername,
+        name_of_sender: currentNameOfUser,
         receiver_id: user.user_id,
         receiver: user.username,
+        name_of_receiver : user.display_name ,
         timestamp,
       };
-
       // const searchUserRequest = {
       //   message_type: MessageTypes.SEARCH_USER_REQUEST,
       //   username : chatMessage
       // }
-
       console.log(req, "req");
       socket.send(JSON.stringify(req));
-      socket.send(JSON.stringify(chatMessage));
+      // socket.send(JSON.stringify(chatMessage));
     } else {
       console.log("WebSocket not connected:", socket?.readyState);
     }
   }
 
-  function handleLogoutButtonClick(){
-    props.onLogoutButtonClick()
-  }
+  // function handleLogoutButtonClick(){
+  //   props.onLogoutButtonClick()
+  // }
 
   return (
     <div className="position-fixed chatpg-container chatpg-white  top-0 start-0 w-100 pt-4 p-3 ps-5 pe-4 z-3">
@@ -141,7 +96,7 @@ export default function Chatpage(props) {
                 style={{ transform: "translate(15%, 15%)" }}
                 onClick={() => setShowSidebar(true)}
               >
-                {friendReqList.length}
+                {friendRequest.length}
               </span>
             {/* )} */}
           </div>
@@ -244,7 +199,7 @@ export default function Chatpage(props) {
         <SidebarFriendRequests
           setShowSidebar={setShowSidebar}
           setFriendRequest={setFriendRequest}
-          friendReqList={friendReqList}
+          friendRequest={friendRequest}
           socket={socket}
           onAccept={(user) => console.log("Accepted:", user)}
           onDecline={(user) => console.log("Declined:", user)}
@@ -257,7 +212,7 @@ export default function Chatpage(props) {
       </Routes> */}
 
       {searchView == "settings" && (
-        <SettingsSidebar onLogoutButtonClick = {handleLogoutButtonClick} onClose={() => setSearchView("icon")} />
+        <SettingsSidebar currentUserId = {currentUserId} currentUsername = {currentUsername} socket= {socket} onClose={() => setSearchView("icon")} />
       )}
     </div>
   );

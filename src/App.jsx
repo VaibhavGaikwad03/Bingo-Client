@@ -10,6 +10,7 @@ import { LoginErrorCodes, SignupErrorCodes } from "./ErrorCodes";
 import AboutUs from "./AboutUs.jsx";
 import Profile from "./Profile.jsx";
 import Settings from "./Settings.jsx";
+import CustomModal from "./CustomModal";
 
 function RequireAuth({ isAuth, children }) {
   return isAuth ? children : <Navigate to="/login" replace />;
@@ -17,15 +18,22 @@ function RequireAuth({ isAuth, children }) {
 
 function App() {
   const newSocket = useRef(null);
+
+  const [socket, setSocket] = useState(null);
+
+  const [currentUserId, setCurrentUserId] = useState("");
+  const [currentUsername, setCurrentUsername] = useState("");
+  const [currentNameOfUser, setCurrentNameOfUser] = useState("");
+
+  const [socketMessage, setSocketMessage] = useState("");
   let [friendRequest, setFriendRequest] = useState([]);
   const [message, setMessage] = useState("");
-  const [socket, setSocket] = useState(null);
-  const [socketMessage, setSocketMessage] = useState("");
   const [isAuth, setIsAuth] = useState(false);
-  const [requestingUser, setRequestingUser] = useState({});
-  const [currentUserId, setCurrentUserId] = useState("");
   const [userProfileInfo, setUserProfileInfo] = useState({});
   let [suggestions, setSuggestions] = useState([]);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [modalErrorMessage, setModalErrorMessage] = useState('');
   // const [isAuth, setIsAuth] = useState(localStorage.getItem("isAuth") === "true");        change it later
 
   const navigate = useNavigate();
@@ -35,10 +43,15 @@ function App() {
     setTimeout(() => setMessage(""), 2000);
   }
 
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+    setModalErrorMessage(''); 
+  };
+
   useEffect(() => {
     console.log("in useEffect");
-    // newSocket.current = new WebSocket("https://163f0db516a0.ngrok-free.app/");
-    newSocket.current = new WebSocket("ws://localhost:2121");
+    newSocket.current = new WebSocket("https://c2593c6b03ce.ngrok-free.app/");
+    // newSocket.current = new WebSocket("ws://localhost:3001");
     console.log("in useeffect ");
 
     newSocket.current.onopen = () => {
@@ -105,17 +118,28 @@ function App() {
           }
           break;
 
-        case MessageTypes.LOGOUT_RESPONSE:
-          {
-            console.log(parsedData,"Logout response");
-            if(parsedData.status == Status.SUCCESS){
-              navigate("/homepage")
+          case MessageTypes.LOGOUT_RESPONSE:
+            {
+              console.log(parsedData, "Logout response");
+              if (parsedData.status === Status.SUCCESS) { 
+                setCurrentUserId(null);
+                setCurrentUsername(null);
+                setCurrentNameOfUser(null);
+                setSocketMessage(null);
+                setFriendRequest(null);
+                setMessage(null);
+                setIsAuth(null);  
+                setUserProfileInfo(null);  
+                setSuggestions(null); 
+                setShowErrorModal(null);  
+                setModalErrorMessage(null);      
+                navigate("/");
+              } else if (parsedData.status === Status.ERROR) {
+                setModalErrorMessage("An error occurred while logging out. Please try again.");
+                setShowErrorModal(true);
+              }
             }
-            else if(parsedData.status == Status.ERROR){
-              window.alert("Error occured while logging out")
-            }
-          }
-          break;
+            break;
 
         case MessageTypes.SEARCH_USER_RESPONSE:
           {
@@ -150,6 +174,7 @@ function App() {
         case MessageTypes.USER_PROFILE_INFORMATION:
           {
             console.log(parsedData, "user profile info");
+            setCurrentNameOfUser(parsedData.fullname)
             setUserProfileInfo(parsedData);
           }
           break;
@@ -163,7 +188,7 @@ function App() {
         case MessageTypes.USER_PENDING_FRIEND_REQUESTS_LIST:
           {
             console.log(parsedData,"user pending friend reqs list");
-            setFriendRequest((prev) => [...prev, parsedData.pending_friend_requests_list]);
+            setFriendRequest(parsedData.pending_friend_requests_list);
           }
           break;
 
@@ -200,42 +225,18 @@ function App() {
     };
   }, []);
 
-  function handleLoginFormSubmit(loginform) {
-    setRequestingUser(loginform.username);
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      const loginData = {
-        message_type: MessageTypes.LOGIN_REQUEST,
-        ...loginform,
-        timestamp,
-      };
-      socket.send(JSON.stringify(loginData));
-    } else {
-      console.log("WebSocket not connected:", socket?.readyState);
-    }
-  }
-
-  function handleSignupFormSubmit(signupform) {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      const signupData = {
-        message_type: MessageTypes.SIGN_UP_REQUEST,
-        ...signupform,
-        timestamp,
-      };
-      socket.send(JSON.stringify(signupData));
-    } else {
-      console.log("WebSocket not connected:", socket?.readyState);
-    }
-  }
-
-  function handleLogoutButtonClick(){
-    const logout_req = {
-      message_type: MessageTypes.LOGOUT_REQUEST,
-      user_id : currentUserId ,
-      username : requestingUser
-    };
-    console.log(logout_req);
-    socket.send(JSON.stringify(logout_req));
-  }
+  // function handleSignupFormSubmit(signupform) {
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     const signupData = {
+  //       message_type: MessageTypes.SIGN_UP_REQUEST,
+  //       ...signupform,
+  //       timestamp,
+  //     };
+  //     socket.send(JSON.stringify(signupData));
+  //   } else {
+  //     console.log("WebSocket not connected:", socket?.readyState);
+  //   }
+  // }
 
   return (
     <>
@@ -276,9 +277,11 @@ function App() {
           path="/login"
           element={
             <Login
-              onLoginFormSubmit={handleLoginFormSubmit}
               setMessage={setMessage}
               message={message}
+              setCurrentUsername = {setCurrentUsername}
+              socket={socket}
+              timestamp={timestamp}
             />
           }
         />
@@ -286,9 +289,11 @@ function App() {
           path="/signup"
           element={
             <Signup
-              onSignupFormSubmit={handleSignupFormSubmit}
+              // onSignupFormSubmit={handleSignupFormSubmit}
               message={message}
               setMessage={setMessage}
+              socket={socket}
+              timestamp={timestamp}
             />
           }
         />
@@ -299,13 +304,14 @@ function App() {
               <Chatpage
                 socket={socket}
                 friendRequest={friendRequest}
+                currentNameOfUser={currentNameOfUser}
                 setFriendRequest={setFriendRequest}
                 setSuggestions={setSuggestions}
-                requestingUser={requestingUser}
+                currentUsername={currentUsername}
                 suggestions={suggestions}
                 currentUserId={currentUserId}
                 timestamp={timestamp}
-                onLogoutButtonClick = {handleLogoutButtonClick}
+                // onLogoutButtonClick = {handleLogoutButtonClick}
               />
             </RequireAuth>
           }
@@ -317,6 +323,14 @@ function App() {
         />
         <Route path="/settings" element={<Settings />} />
       </Routes>
+
+      {showErrorModal && (
+        <CustomModal
+          title="Logout Error" 
+          message={modalErrorMessage} 
+          onClose={handleCloseErrorModal} 
+        />
+      )}
     </>
   );
 }

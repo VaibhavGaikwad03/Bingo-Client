@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MessageTypes } from "./Status_MessageTypes";
 
 export default function Login(props) {
-  const { message, setMessage } = props;
+  const { message, setMessage , socket ,timestamp ,setCurrentUsername} = props;
   const [loginform, setLoginform] = useState({});
   const [usernameError, setUsernameError] = useState("");
   const navigate = useNavigate();
@@ -22,8 +23,17 @@ export default function Login(props) {
 
   function handleLoginFormSubmit(event) {
     event.preventDefault();
-    console.log(loginform);
-    props.onLoginFormSubmit(loginform);
+    setCurrentUsername(loginform.username);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const loginData = {
+        message_type: MessageTypes.LOGIN_REQUEST,
+        ...loginform,
+        timestamp,
+      };
+      socket.send(JSON.stringify(loginData));
+    } else {
+      console.log("WebSocket not connected:", socket?.readyState);
+    }
   }
 
   function handleTextChange(eventOrName, value) {

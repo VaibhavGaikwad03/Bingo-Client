@@ -3,7 +3,7 @@ import Settings from "./Settings.jsx";
 import { MessageTypes } from "./Status_MessageTypes";
 import { useNavigate } from "react-router-dom";
 
-export default function SettingsSidebar({ onClose }) {
+export default function SettingsSidebar({ onClose,currentUserId,currentUsername,socket }) {
   let [settingsView, setSettingsView] = useState("");
   const navigate = useNavigate();
   function handleclosesettings() {
@@ -12,7 +12,13 @@ export default function SettingsSidebar({ onClose }) {
   }
 
   function handleLogoutButtonClick(){
-    props.onLogoutButtonClick();
+    const logout_req = {
+      message_type: MessageTypes.LOGOUT_REQUEST,
+      user_id : currentUserId ,
+      username : currentUsername
+    };
+    console.log(logout_req);
+    socket.send(JSON.stringify(logout_req));
   }
 
   return settingsView === "settings" ? (
@@ -39,7 +45,8 @@ export default function SettingsSidebar({ onClose }) {
           </li>
           <li
             className="list-group-item text-danger"
-            onClick={() => navigate("/")}
+            // onClick={() => navigate("/")}
+            onClick={handleLogoutButtonClick}
           >
             <img
               src="/images/icons/logout.png"

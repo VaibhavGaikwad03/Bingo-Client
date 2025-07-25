@@ -45,7 +45,7 @@ export default function Profile(props) {
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
               <img
                 className="circular-image"
-                src="/images/pp.jpg"
+                src="/images/icons/user.png"
                 alt="Profile"
                 style={{
                   width: "150px",
