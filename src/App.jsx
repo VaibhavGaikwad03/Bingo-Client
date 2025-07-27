@@ -11,6 +11,8 @@ import AboutUs from "./AboutUs.jsx";
 import Profile from "./Profile.jsx";
 import Settings from "./Settings.jsx";
 import CustomModal from "./CustomModal";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function RequireAuth({ isAuth, children }) {
   return isAuth ? children : <Navigate to="/login" replace />;
@@ -28,12 +30,17 @@ function App() {
   const [socketMessage, setSocketMessage] = useState("");
   let [friendRequest, setFriendRequest] = useState([]);
   const [message, setMessage] = useState("");
-  const [isAuth, setIsAuth] = useState(false);
+
+  // const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(
+    () => localStorage.getItem("isAuth") === "true"
+  );
+
   const [userProfileInfo, setUserProfileInfo] = useState({});
   let [suggestions, setSuggestions] = useState([]);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [modalErrorMessage, setModalErrorMessage] = useState('');
+  const [modalErrorMessage, setModalErrorMessage] = useState("");
   // const [isAuth, setIsAuth] = useState(localStorage.getItem("isAuth") === "true");        change it later
 
   const navigate = useNavigate();
@@ -45,13 +52,13 @@ function App() {
 
   const handleCloseErrorModal = () => {
     setShowErrorModal(false);
-    setModalErrorMessage(''); 
+    setModalErrorMessage("");
   };
 
   useEffect(() => {
     console.log("in useEffect");
     // newSocket.current = new WebSocket("https://c2593c6b03ce.ngrok-free.app/");
-    newSocket.current = new WebSocket("ws://localhost:2121");
+    newSocket.current = new WebSocket("ws://localhost:3001");
     console.log("in useeffect ");
 
     newSocket.current.onopen = () => {
@@ -71,6 +78,8 @@ function App() {
               setCurrentUserId(parsedData.user_id);
               setMessage("Login Successfull");
               setIsAuth(true);
+              localStorage.setItem("isAuth", "true");
+
               // setRequestingUser(parsedData);
               // localStorage.setItem("isAuth", "true");      //we will change it later
               clearMessage();
@@ -118,28 +127,33 @@ function App() {
           }
           break;
 
-          case MessageTypes.LOGOUT_RESPONSE:
-            {
-              console.log(parsedData, "Logout response");
-              if (parsedData.status === Status.SUCCESS) { 
-                setCurrentUserId(null);
-                setCurrentUsername(null);
-                setCurrentNameOfUser(null);
-                setSocketMessage(null);
-                setFriendRequest(null);
-                setMessage(null);
-                setIsAuth(null);  
-                setUserProfileInfo(null);  
-                setSuggestions(null); 
-                setShowErrorModal(null);  
-                setModalErrorMessage(null);      
-                navigate("/");
-              } else if (parsedData.status === Status.ERROR) {
-                setModalErrorMessage("An error occurred while logging out. Please try again.");
-                setShowErrorModal(true);
-              }
+        case MessageTypes.LOGOUT_RESPONSE:
+          {
+            console.log(parsedData, "Logout response");
+            if (parsedData.status === Status.SUCCESS) {
+              setCurrentUserId(null);
+              setCurrentUsername(null);
+              setCurrentNameOfUser(null);
+              setSocketMessage(null);
+              setFriendRequest(null);
+              setMessage(null);
+
+              setIsAuth(null);
+              localStorage.removeItem("isAuth");
+
+              setUserProfileInfo(null);
+              setSuggestions(null);
+              setShowErrorModal(null);
+              setModalErrorMessage(null);
+              navigate("/");
+            } else if (parsedData.status === Status.ERROR) {
+              setModalErrorMessage(
+                "An error occurred while logging out. Please try again."
+              );
+              setShowErrorModal(true);
             }
-            break;
+          }
+          break;
 
         case MessageTypes.SEARCH_USER_RESPONSE:
           {
@@ -174,27 +188,27 @@ function App() {
         case MessageTypes.USER_PROFILE_INFORMATION:
           {
             console.log(parsedData, "user profile info");
-            setCurrentNameOfUser(parsedData.fullname)
+            setCurrentNameOfUser(parsedData.fullname);
             setUserProfileInfo(parsedData);
           }
           break;
 
         case MessageTypes.USER_FRIENDS_LIST:
           {
-            console.log(parsedData,"user friend list");
+            console.log(parsedData, "user friend list");
           }
           break;
 
         case MessageTypes.USER_PENDING_FRIEND_REQUESTS_LIST:
           {
-            console.log(parsedData,"user pending friend reqs list");
+            console.log(parsedData, "user pending friend reqs list");
             setFriendRequest(parsedData.pending_friend_requests_list);
           }
           break;
 
         case MessageTypes.USER_MESSAGE_HISTORY:
           {
-            console.log(parsedData,"user msg history");
+            console.log(parsedData, "user msg history");
           }
           break;
 
@@ -204,7 +218,6 @@ function App() {
           }
           break;
       }
-
     };
 
     newSocket.current.onclose = () => {
@@ -279,7 +292,7 @@ function App() {
             <Login
               setMessage={setMessage}
               message={message}
-              setCurrentUsername = {setCurrentUsername}
+              setCurrentUsername={setCurrentUsername}
               socket={socket}
               timestamp={timestamp}
             />
@@ -319,18 +332,31 @@ function App() {
         <Route path="/about_us" element={<AboutUs />} />
         <Route
           path="/profile"
-          element={<Profile userProfileInfo={userProfileInfo} />}
+          element={
+            <RequireAuth isAuth={isAuth}>
+              <Profile userProfileInfo={userProfileInfo} />
+            </RequireAuth>
+          }
         />
-        <Route path="/settings" element={<Settings />} />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth isAuth={isAuth}>
+              <Settings />
+            </RequireAuth>
+          }
+        />
       </Routes>
 
       {showErrorModal && (
         <CustomModal
-          title="Logout Error" 
-          message={modalErrorMessage} 
-          onClose={handleCloseErrorModal} 
+          title="Logout Error"
+          message={modalErrorMessage}
+          onClose={handleCloseErrorModal}
         />
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 }

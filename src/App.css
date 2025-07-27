@@ -2,7 +2,8 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: rgb(255, 193, 228);   
+  background-color: rgb(255, 193, 228);
+  font-family: 'Merriweather', serif;
 }
 
 .bottom-bell {
@@ -143,3 +144,316 @@ body {
 }
 
 .read-the-docs { color: #888; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Default/Light mode for the overlay */
+/* .appearance-overlay { */
+  /* background-color: rgba(248, 249, 250, 0.7); Light semi-transparent overlay */
+  /* transition: background-color 0.3s ease; */
+/* } */
+
+/* Dark mode for the overlay */
+/* body[data-theme="dark"] .appearance-overlay {
+  background-color: rgba(0, 0, 0, 0.7); Dark semi-transparent overlay */
+/* } */
+
+
+/* Default/Light mode for the modal content itself (the white box) */
+/* .appearance-modal {
+  background-color: white; /* This was the original issue! */
+  /* color: #333;
+  transition: background-color 0.3s ease, color 0.3s ease;
+} */ 
+
+/* Dark mode for the modal content */
+/* body[data-theme="dark"] .appearance-modal {
+  background-color: #333333; /* Dark background for the modal */
+  /* color: #e0e0e0; /* Light text for the modal */
+/* } */
+
+/* Make sure text within the modal also changes */
+/* body[data-theme="dark"] .appearance-modal h5,
+body[data-theme="dark"] .appearance-modal label {
+  color: #e0e0e0;
+}
+
+/* And if the select input itself needs styling in dark mode */
+/* body[data-theme="dark"] .appearance-modal .form-select {
+  background-color: #444444;
+  color: #e0e0e0;
+  border-color: #555555;
+} */  
+/* body[data-theme="dark"] .appearance-modal .form-select option {
+  background-color: #444444; /* Options background */
+  /* color: #e0e0e0; /* Options text */
+/* } */ 
+
+/* ... (rest of your existing app.css, including the dark mode rules from previous step) ... */
+
+/* Example of existing dark mode rules that apply to elements within the modal */
+/* These rules should already be present from our previous discussion */
+/* body[data-theme="dark"] .bg-white { /* If your modal still uses bg-white, ensure this targets it */
+  /* background-color: #2d3748; /* Darker background for the card/modal */
+  /* color: #e2e8f0;
+  border-color: #4a5568;
+} */ 
+
+
+
+
+
+
+/* body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(255, 193, 228); 
+  font-family: 'Merriweather', serif;
+  color: #333; /* Default text color for light mode */
+  /* transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transitions for theme changes */
+/* } */ 
+
+/* --- Dark Mode Styles --- */
+/* body[data-theme="dark"] {
+  background-color: #212121; /* Dark background */
+  /* color: #e0e0e0; /* Light text */
+/* }  */
+
+/* --- Specific Element Styling for Dark Mode --- */
+
+/* chatpg-white */
+/* .chatpg-white { */
+  /* background-color: white; Light mode background */
+  /* height: 100%; */
+  /* border-radius: 0px; */
+  /* overflow-y: auto; */
+  /* transition: background-color 0.3s ease, color 0.3s ease; */
+/* } */ 
+
+/* body[data-theme="dark"] .chatpg-white {
+  background-color: #333333; /* Dark mode background */
+  /* color: #e0e0e0; /* Light text for chat area */
+/* } */
+
+/* suggestion-list */
+/* .suggestion-list {
+  max-height: 365px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1050;
+  background-color: #fff; /* Light mode background */
+  /* border-radius: 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body[data-theme="dark"] .suggestion-list {
+  background-color: #424242; /* Dark mode background */
+  /* color: #e0e0e0;
+} */
+
+/* settings-options */
+/* .settings-options {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 320px;
+  background-color: #fff; /* Light mode background */
+  /* box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  padding: 1.5rem;
+  overflow-y: auto;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body[data-theme="dark"] .settings-options {
+  background-color: #333333; /* Dark mode background */
+  /* color: #e0e0e0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5); /* Adjust shadow for dark mode visibility */
+/* } */
+
+/* settings-sidebar */
+/* .settings-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 320px;
+  background-color: #fff; /* Light mode background */
+  /* box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  padding: 1.5rem;
+  overflow-y: auto;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body[data-theme="dark"] .settings-sidebar {
+  background-color: #333333; /* Dark mode background */
+  /* color: #e0e0e0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5);
+} */
+
+/* sidebar-friend-requests */
+/* .sidebar-friend-requests {
+  width: 300px;
+  height: 100vh;
+  z-index: 9999;
+  padding: 1rem;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: white; /* Light mode background */
+  /* border-left: 1px solid #dee2e6;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+body[data-theme="dark"] .sidebar-friend-requests {
+  background-color: #333333; /* Dark mode background */
+  /* color: #e0e0e0;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.4);
+  border-left: 1px solid #555555;
+} */
+
+/* bg-light-green, bg-light-grey, bg-light-yellow - these might need dark mode counterparts if they are used for backgrounds that should change. */
+/* If these are meant to be specific highlight colors that *don't* change with the theme, leave them as is. */
+/* If they should adapt, you'd define them like: */
+/* body[data-theme="dark"] .bg-light-green { background-color: #28a745; } */
+
+
+/* form-container */
+/* .form-container {
+  width: 400px;
+  padding: 40px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1); /* Light mode translucent background */
+  /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+} */
+
+/* body[data-theme="dark"] .form-container {
+  background: rgba(0, 0, 0, 0.3); /* Dark mode translucent background */
+  /* box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+} */ 
+
+/* For elements not explicitly listed, they will inherit 'color' from body */
+/* If you have specific text colors (e.g., h1, p tags), add rules for them too */
+/* body[data-theme="dark"] h1,
+body[data-theme="dark"] h2,
+body[data-theme="dark"] h3,
+body[data-theme="dark"] h4,
+body[data-theme="dark"] h5,
+body[data-theme="dark"] h6,
+body[data-theme="dark"] p,
+body[data-theme="dark"] label { */
+  /* color: #e0e0e0; Ensure text is light in dark mode */
+/* } */
+
+/* --- Existing Styles (remain as is or adjusted for transitions) --- */
+/* .bottom-bell {
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  margin-right: 0.2rem;
+  position: absolute;
+  bottom: 3%; */
+  /* If you want bell color to change, you'd need to add 'color' or 'filter' property here */
+/* }
+
+.chatpage-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  cursor: pointer;
+  margin-right: 0.2rem; */
+  /* If you want icon color to change, you'd need to add 'color' or 'filter' property here */
+/* }
+
+.chatpg-container {
+  height: 100vh;
+  width: 100vw;
+}
+
+.settings-close-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.2rem;
+  cursor: pointer; */
+  /* If this is text '✕', its color will inherit from body. If an icon, check its SVG fill/stroke */
+/* }
+
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.navbar {
+  height: 90px; */
+  /* Add theme awareness if your navbar background/text needs to change */
+/* } */
+
+/* .login-btn {
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  padding: 8px 24px; */
+  /* Add theme awareness if button background/text needs to change */
+/* }
+
+.login-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+} */
+
+/* .read-the-docs {
+  color: #888; */
+  /* Add theme awareness if this specific text color needs to change */
+/* } */

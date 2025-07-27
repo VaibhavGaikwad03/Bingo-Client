@@ -1,5 +1,6 @@
 import { FriendRequestStatus, MessageTypes } from "./Status_MessageTypes";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function SidebarFriendRequests(props) {
   let { friendRequest, setFriendRequest, setShowSidebar, socket } = props;
@@ -37,7 +38,8 @@ export default function SidebarFriendRequests(props) {
   };
   const handleAccept = (req) => {
     console.log(req);
-    alert(`Accepted request from ${req.sender}`);
+    // alert(`Accepted request from ${req.sender}`);
+    toast.success(`Accepted request from ${req.sender}`);
 
     setFriendRequest((prev) =>
       prev.filter((u) => u.sender_id !== req.sender_id)
@@ -60,7 +62,9 @@ export default function SidebarFriendRequests(props) {
   };
 
   const handleDecline = (req) => {
-    alert(`Declined request from ${req.sender}`);
+    // alert(`Declined request from ${req.sender}`);
+    toast.info(`Declined request from ${req.sender}`);
+
     setFriendRequest((prev) =>
       prev.filter((u) => u.sender_id !== req.sender_id)
     );
