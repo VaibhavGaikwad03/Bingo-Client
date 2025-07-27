@@ -15,7 +15,7 @@
     "@react-three/postprocessing": "^3.0.4",
     "axios": "^1.9.0",
     "bootstrap-icons": "^1.13.1",
-    "drei": "^2.2.21",
+    "drei": "^0.0.45",
     "framer-motion": "^12.18.1",
     "lucide-react": "^0.526.0",
     "postprocessing": "^6.37.4",
