@@ -1,9 +1,101 @@
-
 body {
   margin: 0;
   padding: 0;
   background-color: rgb(255, 193, 228);
   font-family: 'Merriweather', serif;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, label {
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #0056b3;
+}
+
+.form-control, .form-select {
+  background-color: #ffffff;
+  color: #212529;
+  border: 1px solid #ced4da;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.form-control::placeholder {
+  color: #6c757d;
+  transition: color 0.3s ease;
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  color: white;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.card, .modal-content, .list-group-item, .dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  border-color: rgba(0, 0, 0, 0.15); 
+}
+
+.dropdown-item {
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: #e9ecef;
+  color: #16181b;
+}
+
+.navbar {
+  background-color: #f8f9fa;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.bottom-bell, .chatpage-icon, .settings-close-icon {
+  color: #212529;
+  transition: color 0.3s ease;
 }
 
 .bottom-bell {
@@ -15,7 +107,7 @@ body {
   bottom: 3%;
 }
 
-.chatpage-icon{
+.chatpage-icon {
   width: 3.5rem;
   height: 3.5rem;
   cursor: pointer;
@@ -29,9 +121,11 @@ body {
 
 .chatpg-white {
   background-color: white;
-  height: 100%;        
-  border-radius: 0px;  
-  overflow-y: auto;   
+  height: 100%;
+  border-radius: 0px;
+  overflow-y: auto;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .settings-close-icon {
@@ -49,35 +143,31 @@ body {
   z-index: 1050;
   background-color: #fff;
   border-radius: 0.5rem;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.settings-options{
+.settings-options, .settings-sidebar {
   position: fixed;
   top: 0;
-  right: 0; 
   height: 100vh;
   width: 320px;
   background-color: #fff;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2); 
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   padding: 1.5rem;
   overflow-y: auto;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-options {
+  right: 0;
 }
 
 .settings-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0; 
-  height: 100vh;
-  width: 320px;
-  background-color: #fff;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2); 
-  z-index: 9999;
-  padding: 1.5rem;
-  overflow-y: auto;
+  left: 0;
 }
-
-
 
 .sidebar-friend-requests {
   width: 300px;
@@ -90,27 +180,27 @@ body {
   top: 0;
   right: 0;
   background-color: white;
-  border-left: 1px solid #dee2e6; 
+  border-left: 1px solid #dee2e6;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-
 .bg-light-green {
-  background-color: #d4edda ; 
+  background-color: #d4edda;
+  color: #155724;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .bg-light-grey {
-  background-color: #f2f2f2 ; 
+  background-color: #f2f2f2;
+  color: #343a40;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .bg-light-yellow {
-  background-color: #fff9db  
-}
-
-
-@keyframes floatLogo {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
+  background-color: #fff9db;
+  color: #856404;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .navbar { height: 90px; }
@@ -119,6 +209,9 @@ body {
   transition: all 0.3s ease;
   border-radius: 20px;
   padding: 8px 24px;
+  background-color: #0d6efd;
+  color: white;
+  border: 1px solid #0d6efd;
 }
 
 .login-btn:hover { transform: scale(1.05); opacity: 0.9; }
@@ -132,6 +225,19 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #212529;
+  transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, color 0.3s ease;
+}
+
+.read-the-docs {
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+@keyframes floatLogo {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
 }
 
 @keyframes logo-spin {
@@ -143,317 +249,267 @@ body {
   a:nth-of-type(2) .logo { animation: logo-spin infinite 20s linear; }
 }
 
-.read-the-docs { color: #888; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Default/Light mode for the overlay */
-/* .appearance-overlay { */
-  /* background-color: rgba(248, 249, 250, 0.7); Light semi-transparent overlay */
-  /* transition: background-color 0.3s ease; */
-/* } */
-
-/* Dark mode for the overlay */
-/* body[data-theme="dark"] .appearance-overlay {
-  background-color: rgba(0, 0, 0, 0.7); Dark semi-transparent overlay */
-/* } */
-
-
-/* Default/Light mode for the modal content itself (the white box) */
-/* .appearance-modal {
-  background-color: white; /* This was the original issue! */
-  /* color: #333;
-  transition: background-color 0.3s ease, color 0.3s ease;
-} */ 
-
-/* Dark mode for the modal content */
-/* body[data-theme="dark"] .appearance-modal {
-  background-color: #333333; /* Dark background for the modal */
-  /* color: #e0e0e0; /* Light text for the modal */
-/* } */
-
-/* Make sure text within the modal also changes */
-/* body[data-theme="dark"] .appearance-modal h5,
-body[data-theme="dark"] .appearance-modal label {
+body.dark {
+  background-color: #121212;
   color: #e0e0e0;
 }
 
-/* And if the select input itself needs styling in dark mode */
-/* body[data-theme="dark"] .appearance-modal .form-select {
-  background-color: #444444;
+body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6,
+body.dark p, body.dark span, body.dark label {
   color: #e0e0e0;
-  border-color: #555555;
-} */  
-/* body[data-theme="dark"] .appearance-modal .form-select option {
-  background-color: #444444; /* Options background */
-  /* color: #e0e0e0; /* Options text */
-/* } */ 
+}
 
-/* ... (rest of your existing app.css, including the dark mode rules from previous step) ... */
+body.dark a {
+  color: #8ab4f8;
+}
 
-/* Example of existing dark mode rules that apply to elements within the modal */
-/* These rules should already be present from our previous discussion */
-/* body[data-theme="dark"] .bg-white { /* If your modal still uses bg-white, ensure this targets it */
-  /* background-color: #2d3748; /* Darker background for the card/modal */
-  /* color: #e2e8f0;
-  border-color: #4a5568;
-} */ 
+body.dark a:hover {
+  color: #a6cbfd;
+}
+
+body.dark .form-control, body.dark .form-select {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  border-color: #495057;
+}
+
+body.dark .form-control::placeholder {
+  color: #a0a0a0;
+}
+
+body.dark .btn-primary {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+  color: #1a1a1a;
+}
+
+body.dark .btn-secondary {
+  background-color: #5a5a5a;
+  border-color: #5a5a5a;
+  color: #e0e0e0;
+}
+
+body.dark .btn-outline-secondary {
+  color: #8c929a;
+  border-color: #8c929a;
+}
+
+body.dark .btn-outline-secondary:hover {
+  color: #1a1a1a;
+  background-color: #e0e0e0;
+  border-color: #e0e0e0;
+}
+
+body.dark .card, body.dark .modal-content, body.dark .list-group-item, body.dark .dropdown-menu {
+  background-color: #1e1e1e;
+  border-color: #343a40;
+  color: #e0e0e0;
+}
+
+body.dark .list-group-item:hover {
+  background-color: #3a3a3a;
+}
+
+body.dark .dropdown-item {
+  color: #e0e0e0;
+}
+
+body.dark .dropdown-item:hover, body.dark .dropdown-item:focus {
+  background-color: #2c2c2c;
+  color: #f0f0f0;
+}
+
+body.dark .navbar {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+body.dark .bottom-bell, body.dark .chatpage-icon, body.dark .settings-close-icon {
+  color: #e0e0e0;
+}
+
+body.dark .chatpg-white {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+}
+
+body.dark .suggestion-list {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+}
+
+body.dark .settings-options, body.dark .settings-sidebar {
+  background-color: #1e1e1e;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+  color: #e0e0e0;
+}
+
+body.dark .sidebar-friend-requests {
+  background-color: #1e1e1e;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  border-left: 1px solid #343a40;
+  color: #e0e0e0;
+}
+
+body.dark .bg-light-green {
+  background-color: #1f3b23;
+  color: #c3e6cb;
+}
+
+body.dark .bg-light-grey {
+  background-color: #3a3a3a;
+  color: #d3d3d3;
+}
+
+body.dark .bg-light-yellow {
+  background-color: #3b351a;
+  color: #fff3cd;
+}
+
+body.dark .login-btn {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+  color: #1a1a1a;
+}
+
+body.dark .form-container {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+}
+
+body.dark .read-the-docs {
+  color: #b0b0b0;
+}
+
+body.dark .bg-white {
+  background-color: #1e1e1e !important;
+}
+
+body.dark .bg-light {
+  background-color: #2c2c2c !important;
+}
+
+body.dark .text-dark {
+  color: #e0e0e0 !important;
+}
+
+body.dark .text-muted {
+  color: #a0a0a0 !important;
+}
+
+.modal-overlay-custom {
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+body.dark .modal-overlay-custom {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-offset-and-zindex {
+  top: 0;
+  left: 300px;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.modal-content-box {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  color: #212529;
+  border-color: #dee2e6;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.modal-content-box-lg {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  color: #212529;
+  border-color: #dee2e6;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark .modal-content-box,
+body.dark .modal-content-box-lg {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #343a40;
+}
+
+body.dark .modal-content-box h4,
+body.dark .modal-content-box-lg h4 {
+  color: #f0f0f0;
+}
 
 
-
-
-
-
-/* body {
-  margin: 0;
-  padding: 0;
-  background-color: rgb(255, 193, 228); 
-  font-family: 'Merriweather', serif;
-  color: #333; /* Default text color for light mode */
-  /* transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transitions for theme changes */
-/* } */ 
-
-/* --- Dark Mode Styles --- */
-/* body[data-theme="dark"] {
-  background-color: #212121; /* Dark background */
-  /* color: #e0e0e0; /* Light text */
-/* }  */
-
-/* --- Specific Element Styling for Dark Mode --- */
-
-/* chatpg-white */
-/* .chatpg-white { */
-  /* background-color: white; Light mode background */
-  /* height: 100%; */
-  /* border-radius: 0px; */
-  /* overflow-y: auto; */
-  /* transition: background-color 0.3s ease, color 0.3s ease; */
-/* } */ 
-
-/* body[data-theme="dark"] .chatpg-white {
-  background-color: #333333; /* Dark mode background */
-  /* color: #e0e0e0; /* Light text for chat area */
-/* } */
-
-/* suggestion-list */
-/* .suggestion-list {
-  max-height: 365px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  z-index: 1050;
-  background-color: #fff; /* Light mode background */
-  /* border-radius: 0.5rem;
+.profile-page {
+  background-color: #fff; 
+  color: #212529; 
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body[data-theme="dark"] .suggestion-list {
-  background-color: #424242; /* Dark mode background */
-  /* color: #e0e0e0;
-} */
-
-/* settings-options */
-/* .settings-options {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 320px;
-  background-color: #fff; /* Light mode background */
-  /* box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
-  padding: 1.5rem;
-  overflow-y: auto;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+body.dark .profile-page {
+  background-color: #121212; 
+  color: #e0e0e0; 
 }
 
-body[data-theme="dark"] .settings-options {
-  background-color: #333333; /* Dark mode background */
-  /* color: #e0e0e0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5); /* Adjust shadow for dark mode visibility */
-/* } */
-
-/* settings-sidebar */
-/* .settings-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 320px;
-  background-color: #fff; /* Light mode background */
-  /* box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
-  z-index: 9999;
-  padding: 1.5rem;
-  overflow-y: auto;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+.form-label-custom {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  width: 100%;
+  color: #212529;
+  transition: color 0.3s ease;
 }
 
-body[data-theme="dark"] .settings-sidebar {
-  background-color: #333333; /* Dark mode background */
-  /* color: #e0e0e0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.5);
-} */
-
-/* sidebar-friend-requests */
-/* .sidebar-friend-requests {
-  width: 300px;
-  height: 100vh;
-  z-index: 9999;
-  padding: 1rem;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  position: fixed;
-  top: 0;
-  right: 0;
-  background-color: white; /* Light mode background */
-  /* border-left: 1px solid #dee2e6;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+body.dark .form-label-custom {
+  color: #e0e0e0; 
 }
 
-body[data-theme="dark"] .sidebar-friend-requests {
-  background-color: #333333; /* Dark mode background */
-  /* color: #e0e0e0;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.4);
-  border-left: 1px solid #555555;
-} */
-
-/* bg-light-green, bg-light-grey, bg-light-yellow - these might need dark mode counterparts if they are used for backgrounds that should change. */
-/* If these are meant to be specific highlight colors that *don't* change with the theme, leave them as is. */
-/* If they should adapt, you'd define them like: */
-/* body[data-theme="dark"] .bg-light-green { background-color: #28a745; } */
-
-
-/* form-container */
-/* .form-container {
-  width: 400px;
-  padding: 40px;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1); /* Light mode translucent background */
-  /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-} */
-
-/* body[data-theme="dark"] .form-container {
-  background: rgba(0, 0, 0, 0.3); /* Dark mode translucent background */
-  /* box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-} */ 
-
-/* For elements not explicitly listed, they will inherit 'color' from body */
-/* If you have specific text colors (e.g., h1, p tags), add rules for them too */
-/* body[data-theme="dark"] h1,
-body[data-theme="dark"] h2,
-body[data-theme="dark"] h3,
-body[data-theme="dark"] h4,
-body[data-theme="dark"] h5,
-body[data-theme="dark"] h6,
-body[data-theme="dark"] p,
-body[data-theme="dark"] label { */
-  /* color: #e0e0e0; Ensure text is light in dark mode */
-/* } */
-
-/* --- Existing Styles (remain as is or adjusted for transitions) --- */
-/* .bottom-bell {
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
-  margin-right: 0.2rem;
-  position: absolute;
-  bottom: 3%; */
-  /* If you want bell color to change, you'd need to add 'color' or 'filter' property here */
-/* }
-
-.chatpage-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  cursor: pointer;
-  margin-right: 0.2rem; */
-  /* If you want icon color to change, you'd need to add 'color' or 'filter' property here */
-/* }
-
-.chatpg-container {
-  height: 100vh;
-  width: 100vw;
+.bi { 
+  color: #212529; 
+  transition: color 0.3s ease;
 }
 
-.settings-close-icon {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 1.2rem;
-  cursor: pointer; */
-  /* If this is text '✕', its color will inherit from body. If an icon, check its SVG fill/stroke */
-/* }
-
-@keyframes floatLogo {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+body.dark .bi {
+  color: #e0e0e0; 
 }
 
-.navbar {
-  height: 90px; */
-  /* Add theme awareness if your navbar background/text needs to change */
-/* } */
-
-/* .login-btn {
-  transition: all 0.3s ease;
-  border-radius: 20px;
-  padding: 8px 24px; */
-  /* Add theme awareness if button background/text needs to change */
-/* }
-
-.login-btn:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
+.btn-success {
+  background-color: #198754; 
+  border-color: #198754;
+  color: white;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+body.dark .btn-success {
+  background-color: #28a745; 
+  border-color: #28a745;
+  color: white;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-} */
+.btn-danger {
+  background-color: #dc3545; 
+  border-color: #dc3545;
+  color: white;
+}
 
-/* .read-the-docs {
-  color: #888; */
-  /* Add theme awareness if this specific text color needs to change */
-/* } */
+body.dark .btn-danger {
+  background-color: #df4759; 
+  border-color: #df4759;
+  color: white;
+}
+
+.form-control:disabled {
+  background-color: #e9ecef; 
+  opacity: 1; 
+}
+
+body.dark .form-control:disabled {
+  background-color: #495057; 
+}

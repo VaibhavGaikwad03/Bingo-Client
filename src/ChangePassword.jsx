@@ -1,6 +1,15 @@
 import { useState } from "react";
+import { MessageTypes } from "./Status_MessageTypes";
+import { useEffect } from "react";
 
-export default function ChangePassword({ currentUser, onclose }) {
+export default function ChangePassword({
+  setMessage,
+  message,
+  currentUserId,
+  currentUser,
+  onclose,
+  socket,
+}) {
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
@@ -10,6 +19,25 @@ export default function ChangePassword({ currentUser, onclose }) {
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const isFormFilled = oldPass !== "" && newPass !== "" && confirmPass !== "";
+
+  const [currentThemeMode, setCurrentThemeMode] = useState(() => {
+    return localStorage.getItem("themeMode") || "light";
+  });
+
+  // Listen for changes to the theme mode (e.g., from Appearance component)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setCurrentThemeMode(localStorage.getItem("themeMode") || "light");
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    if (message) {
+      clearMessage();
+    }
+  }, [message]);
 
   const isValidPassword = (password) => {
     const hasMinLength = password.length >= 8;
@@ -22,6 +50,7 @@ export default function ChangePassword({ currentUser, onclose }) {
     e.preventDefault();
     const parseUser = currentUser;
 
+    // // This check should probably be done on the server, not client-side in JS
     // if (oldPass !== parseUser.password) {
     //   setError("❌ Old password is incorrect.");
     //   setSuccess("");
@@ -29,6 +58,7 @@ export default function ChangePassword({ currentUser, onclose }) {
     // }
 
     if (!isValidPassword(newPass)) {
+      // Moved up for quicker feedback
       setError(
         "❌ Password must be at least 8 characters, contain a special character, and have no spaces."
       );
@@ -37,8 +67,24 @@ export default function ChangePassword({ currentUser, onclose }) {
     }
 
     if (newPass !== confirmPass) {
+      // Moved up for quicker feedback
       setError("❌ Passwords do not match.");
       setSuccess("");
+      return;
+    }
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const passwordData = {
+        message_type: MessageTypes.CHANGE_PASSWORD_REQUEST,
+        user_id: currentUserId,
+        old_password: oldPass,
+        new_password: newPass,
+      };
+      console.log(passwordData, "Password data");
+      socket.send(JSON.stringify(passwordData));
+    } else {
+      console.log("WebSocket not connected:", socket?.readyState);
+      setError("❌ Failed to connect to server. Please try again."); // Added error for WebSocket not connected
       return;
     }
 
@@ -49,21 +95,17 @@ export default function ChangePassword({ currentUser, onclose }) {
     setConfirmPass("");
   };
 
+  function clearMessage() {
+    setTimeout(() => setMessage(""), 2000);
+  }
+
+  // Determine dynamic overlay background color
+  const overlayBackgroundColor =
+    currentThemeMode === "dark" ? "rgba(0, 0, 0, 0.7)" : "#f8f9fa";
+
   return (
     <div
-      className="position-fixed"
-      style={{
-        top: 0,
-        left: "300px",
-        right: 0,
-        bottom: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#f8f9fa",
-        padding: "20px",
-        zIndex: 1000,
-      }}
+    className="position-fixed d-flex align-items-center justify-content-center p-4 modal-overlay-custom modal-offset-and-zindex"
     >
       <div
         className="bg-white p-4 shadow rounded-4 border"
@@ -73,6 +115,7 @@ export default function ChangePassword({ currentUser, onclose }) {
         }}
       >
         <h4 className="mb-3 text-center">Change Password</h4>
+        <em>{message}</em>
         <form onSubmit={handleSubmit}>
           <div className="mb-3 position-relative">
             <label className="form-label fw-bold">Old Password</label>
@@ -81,7 +124,7 @@ export default function ChangePassword({ currentUser, onclose }) {
               className="form-control"
               style={{ paddingRight: "40px" }}
               value={oldPass}
-              onChange={(e) => setOldPass(e.target.value)}
+              onChange={(e) => setOldPass(e.target.value.replace(/\s/g, ''))}
             />
             <i
               className={`bi ${
@@ -92,6 +135,8 @@ export default function ChangePassword({ currentUser, onclose }) {
                 cursor: "pointer",
                 top: "75%",
                 transform: "translateY(-50%)",
+                // Bootstrap icons usually inherit color, but if not, you can force it:
+                // color: currentThemeMode === 'dark' ? '#e0e0e0' : '#212529'
               }}
               onClick={() => setShowOldPass(!showOldPass)}
             ></i>
@@ -103,7 +148,7 @@ export default function ChangePassword({ currentUser, onclose }) {
               className="form-control"
               style={{ paddingRight: "40px" }}
               value={newPass}
-              onChange={(e) => setNewPass(e.target.value)}
+              onChange={(e) => setNewPass(e.target.value.replace(/\s/g, ''))}
             />
             <i
               className={`bi ${
@@ -125,7 +170,7 @@ export default function ChangePassword({ currentUser, onclose }) {
               className="form-control"
               style={{ paddingRight: "40px" }}
               value={confirmPass}
-              onChange={(e) => setConfirmPass(e.target.value)}
+              onChange={(e) => setConfirmPass(e.target.value.replace(/\s/g, ''))}
             />
             <i
               className={`bi ${
@@ -145,7 +190,11 @@ export default function ChangePassword({ currentUser, onclose }) {
           {success && <div className="text-success mb-2">{success}</div>}
 
           <div className="text-center">
-            <button type="submit" className="btn btn-primary px-4 me-2" disabled={!isFormFilled}>
+            <button
+              type="submit"
+              className="btn btn-primary px-4 me-2"
+              disabled={!isFormFilled}
+            >
               Submit
             </button>
             <button
@@ -161,245 +210,3 @@ export default function ChangePassword({ currentUser, onclose }) {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-// import { useState } from "react";
-
-// export default function ChangePassword({ currentUser,onclose }) {
-//   const [oldPass, setOldPass] = useState("");
-//   const [newPass, setNewPass] = useState("");
-//   const [confirmPass, setConfirmPass] = useState("");
-//   const [error, setError] = useState("");
-//   const [success, setSuccess] = useState("");
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const parseUser = currentUser;
-
-//     // if (oldPass !== parseUser.password) {
-//     //   setError("❌ Old password is incorrect.");
-//     //   setSuccess("");
-//     //   return;
-//     // }
-
-//     if (newPass.length < 4) {
-//       setError("❌ New password must be at least 4 characters.");
-//       setSuccess("");
-//       return;
-//     }
-
-//     if (newPass !== confirmPass) {
-//       setError("❌ Passwords do not match.");
-//       setSuccess("");
-//       return;
-//     }
-
-//     setSuccess("✅ Password updated successfully.");
-//     setError("");
-//     setOldPass("");
-//     setNewPass("");
-//     setConfirmPass("");
-//   };
-
-//   return (
-//     <div
-//       className="position-fixed"
-//       style={{
-//         top: 0,
-//         left: "300px", 
-//         right: 0,
-//         bottom: 0,
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center",
-//         backgroundColor: "#f8f9fa",
-//         padding: "20px",
-//         zIndex: 1000,
-//       }}
-//     >
-//       <div
-//         className="bg-white p-4 shadow rounded-4 border"
-//         style={{
-//           width: "100%",
-//           maxWidth: "500px",
-//         }}
-//       >
-//         <h4 className="mb-3 text-center">Change Password</h4>
-//         <form onSubmit={handleSubmit}>
-//           <div className="mb-3">
-//             <label className="form-label fw-bold">Old Password</label>
-//             <input
-//               type="password"
-//               className="form-control"
-//               value={oldPass}
-//               onChange={(e) => setOldPass(e.target.value)}
-//             />
-//           </div>
-//           <div className="mb-3">
-//             <label className="form-label fw-bold">New Password</label>
-//             <input
-//               type="password"
-//               className="form-control"
-//               value={newPass}
-//               onChange={(e) => setNewPass(e.target.value)}
-//             />
-//           </div>
-//           <div className="mb-3">
-//             <label className="form-label fw-bold">Confirm Password</label>
-//             <input
-//               type="password"
-//               className="form-control"
-//               value={confirmPass}
-//               onChange={(e) => setConfirmPass(e.target.value)}
-//             />
-//           </div>
-
-//           {error && <div className="text-danger mb-2">{error}</div>}
-//           {success && <div className="text-success mb-2">{success}</div>}
-
-//           <div className="text-center">
-//             <button type="submit" className="btn btn-primary px-4 me-2">
-//               Submit
-//             </button>
-//             <button type="button" className="btn btn-secondary px-4" onClick={onclose}>
-//               Cancel
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // / import { useState } from "react";
-
-// // export default function ChangePassword({ currentUser }) {
-// //   const [oldPass, setOldPass] = useState("");
-// //   const [newPass, setNewPass] = useState("");
-// //   const [confirmPass, setConfirmPass] = useState("");
-// //   const [error, setError] = useState("");
-// //   const [success, setSuccess] = useState("");
-
-// //   const handleSubmit = (e) => {
-// //     e.preventDefault();
-// //     const parseUser = currentUser;
-
-// //     if (oldPass !== parseUser.password) {
-// //       setError("❌ Old password is incorrect.");
-// //       setSuccess("");
-// //       return;
-// //     }
-
-// //     if (newPass.length < 4) {
-// //       setError("❌ New password must be at least 4 characters.");
-// //       setSuccess("");
-// //       return;
-// //     }
-
-// //     if (newPass !== confirmPass) {
-// //       setError("❌ Passwords do not match.");
-// //       setSuccess("");
-// //       return;
-// //     }
-
-// //     setSuccess("✅ Password updated successfully.");
-// //     setError("");
-// //     setOldPass("");
-// //     setNewPass("");
-// //     setConfirmPass("");
-// //   };
-
-// //   return (
-// //     <div
-// //       className="position-fixed"
-// //       style={{
-// //         top: 0,
-// //         left: "300px", 
-// //         right: 0,
-// //         bottom: 0,
-// //         display: "flex",
-// //         alignItems: "center",
-// //         justifyContent: "center",
-// //         backgroundColor: "#f8f9fa",
-// //         padding: "20px",
-// //         zIndex: 1000,
-// //       }}
-// //     >
-// //       <div
-// //         className="bg-white p-4 shadow rounded-4 border"
-// //         style={{
-// //           width: "100%",
-// //           maxWidth: "500px",
-// //         }}
-// //       >
-// //         <h4 className="mb-3 text-center">Change Password</h4>
-// //         <form onSubmit={handleSubmit}>
-// //           <div className="mb-3">
-// //             <label className="form-label fw-bold">Old Password</label>
-// //             <input
-// //               type="password"
-// //               className="form-control"
-// //               value={oldPass}
-// //               onChange={(e) => setOldPass(e.target.value)}
-// //             />
-// //           </div>
-// //           <div className="mb-3">
-// //             <label className="form-label fw-bold">New Password</label>
-// //             <input
-// //               type="password"
-// //               className="form-control"
-// //               value={newPass}
-// //               onChange={(e) => setNewPass(e.target.value)}
-// //             />
-// //           </div>
-// //           <div className="mb-3">
-// //             <label className="form-label fw-bold">Confirm Password</label>
-// //             <input
-// //               type="password"
-// //               className="form-control"
-// //               value={confirmPass}
-// //               onChange={(e) => setConfirmPass(e.target.value)}
-// //             />
-// //           </div>
-
-// //           {error && <div className="text-danger mb-2">{error}</div>}
-// //           {success && <div className="text-success mb-2">{success}</div>}
-
-// //           <div className="text-center">
-// //             <button type="submit" className="btn btn-primary px-4 me-2">
-// //               Submit
-// //             </button>
-// //             <button type="button" className="btn btn-secondary px-4">
-// //               Cancel
-// //             </button>
-// //           </div>
-// //         </form>
-// //       </div>
-// //     </div>
-// //   );
-// // }
-

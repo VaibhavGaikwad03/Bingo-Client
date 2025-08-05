@@ -2,30 +2,65 @@ import { useState } from "react";
 import Settings from "./Settings.jsx";
 import { MessageTypes } from "./Status_MessageTypes";
 import { useNavigate } from "react-router-dom";
+import ConfirmModal from "./ConfirmModal";
 
-export default function SettingsSidebar({ onClose,currentUserId,currentUsername,socket }) {
+export default function SettingsSidebar({
+  theme,
+  setTheme,
+  setMessage,
+  message,
+  onClose,
+  currentUserId,
+  currentUsername,
+  socket,
+}) {
   let [settingsView, setSettingsView] = useState("");
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
   function handleclosesettings() {
     navigate("/settings");
     setSettingsView("");
   }
 
-  function handleLogoutButtonClick(){
+  // function handleLogoutButtonClick(){
+  //   const logout_req = {
+  //     message_type: MessageTypes.LOGOUT_REQUEST,
+  //     user_id : currentUserId ,
+  //     username : currentUsername
+  //   };
+  //   console.log(logout_req);
+  //   socket.send(JSON.stringify(logout_req));
+  // }
+  function handleLogoutButtonClick() {
+    setShowLogoutConfirm(true);
+  }
+
+  function confirmLogout() {
     const logout_req = {
       message_type: MessageTypes.LOGOUT_REQUEST,
-      user_id : currentUserId ,
-      username : currentUsername
+      user_id: currentUserId,
+      username: currentUsername,
     };
     console.log(logout_req);
     socket.send(JSON.stringify(logout_req));
+    setShowLogoutConfirm(false);
+  }
+
+  function handleCancelLogout() {
+    setShowLogoutConfirm(false);
   }
 
   return settingsView === "settings" ? (
-    <Settings onClose={() => setSettingsView("")} />
+    <Settings
+      theme={theme}
+      setTheme={setTheme}
+      onClose={() => setSettingsView("")}
+    />
   ) : (
     <div className="settings-options">
       <>
+        {console.log("Theme in settings sidebar", theme)}
+        {console.log("set theme in settings sidebar", setTheme)}
         <i className="bi bi-x-lg settings-close-icon" onClick={onClose}></i>
 
         <h5 className="mb-4 mt-2"></h5>
@@ -59,11 +94,25 @@ export default function SettingsSidebar({ onClose,currentUserId,currentUsername,
         </ul>
       </>
 
+      {showLogoutConfirm && (
+        <ConfirmModal
+          title="Confirm Logout"
+          message="Are you sure you want to log out?"
+          onConfirm={confirmLogout}
+          onCancel={handleCancelLogout}
+        />
+      )}
+
       {settingsView == "settings" && (
         <>
           <Settings
+            message={message}
+            setMessage={setMessage}
+            theme={theme}
+            setTheme={setTheme}
+            socket={socket}
             onClose={handleclosesettings}
-            // onClose={() => setSettingsView("")}
+            currentUserId={currentUserId}
           />
         </>
       )}

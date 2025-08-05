@@ -101,6 +101,9 @@ export default function Signup(props) {
       setSignupform({ ...signupform, [name]: newValue });
       setUsernameError(error);
     } else {
+      if (name === "password") {
+        inputValue = inputValue.replace(/\s/g, "");
+      }
       setSignupform({ ...signupform, [name]: inputValue });
     }
   }
@@ -190,6 +193,9 @@ export default function Signup(props) {
               name="password"
               autoComplete="off"
               onChange={handleTextChange}
+              onKeyDown={(e) => {
+                if (e.key === " ") e.preventDefault(); 
+              }}
               placeholder="Password"
               required
             />

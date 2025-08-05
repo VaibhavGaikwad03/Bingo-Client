@@ -6,10 +6,12 @@ import { i } from "framer-motion/client";
 import SidebarFriendRequests from "./SidebarFriendRequests.jsx";
 import Profile from "./Profile.jsx";
 import SettingsSidebar from "./SettingsSidebar.jsx";
+import { toast } from "react-toastify";
 
 export default function Chatpage(props) {
-  let { socket } = props;
+  let { socket , message , setMessage} = props;
   let { friendRequest } = props;
+  let{theme, setTheme} = props;
   let { currentUsername } = props;
   let { setFriendRequest ,currentUserId ,currentNameOfUser, timestamp} = props;
   let { setSuggestions } = props;
@@ -41,7 +43,8 @@ export default function Chatpage(props) {
   }
 
   function handleAddFriendButtonClick(user) {
-    alert("Friend Request Sent to " + user.display_name);
+    // alert("Friend Request Sent to " + user.display_name);
+    toast.info(`Friend request sent to  ${user.username}`);
     if (socket && socket.readyState === WebSocket.OPEN) {
       const req = {
         message_type: MessageTypes.FRIEND_REQ_REQUEST,
@@ -59,7 +62,7 @@ export default function Chatpage(props) {
       // }
       console.log(req, "req");
       socket.send(JSON.stringify(req));
-      // socket.send(JSON.stringify(chatMessage));
+      socket.send(JSON.stringify(chatMessage));
     } else {
       console.log("WebSocket not connected:", socket?.readyState);
     }
@@ -71,6 +74,9 @@ export default function Chatpage(props) {
 
   return (
     <div className="position-fixed chatpg-container chatpg-white  top-0 start-0 w-100 pt-4 p-3 ps-5 pe-4 z-3">
+                {/* {console.log("Theme in settings" , theme)}
+                {console.log("set theme in settings" , setTheme)} */}
+
       {searchView == "icon" && (
         <div className="d-flex justify-content-end   me-3">
           <img
@@ -212,7 +218,13 @@ export default function Chatpage(props) {
       </Routes> */}
 
       {searchView == "settings" && (
-        <SettingsSidebar currentUserId = {currentUserId} currentUsername = {currentUsername} socket= {socket} onClose={() => setSearchView("icon")} />
+        <SettingsSidebar 
+        message={message}
+        setMessage={setMessage}
+        theme={theme} setTheme={setTheme}
+        currentUserId = {currentUserId} 
+        currentUsername = {currentUsername} 
+        socket= {socket} onClose={() => setSearchView("icon")} />
       )}
     </div>
   );

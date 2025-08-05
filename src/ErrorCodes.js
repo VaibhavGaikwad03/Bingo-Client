@@ -14,3 +14,8 @@ export const SignupErrorCodes = {
 export const ErrorCodes = {  //generic
     INVALID_USER_ID : -1   
 }
+
+export const ChangePasswordErrorCodes = {
+    NONE : 0,
+    NEW_PASSWORD_MUST_BE_DIFFERENT : 3001,
+};

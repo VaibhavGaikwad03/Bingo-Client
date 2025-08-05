@@ -58,12 +58,17 @@ export default function SidebarFriendRequests(props) {
     };
 
     console.log(friend_req_status);
-    socket.send(JSON.stringify(friend_req_status));
+    if (socket && socket.readyState === WebSocket.OPEN) { 
+      socket.send(JSON.stringify(friend_req_status));
+    } else {
+      console.error("WebSocket not Connected.");
+      toast.error("Connection not ready. Please try again."); 
+    }
   };
 
   const handleDecline = (req) => {
     // alert(`Declined request from ${req.sender}`);
-    toast.info(`Declined request from ${req.sender}`);
+    toast.error(`Declined request from ${req.sender}`);
 
     setFriendRequest((prev) =>
       prev.filter((u) => u.sender_id !== req.sender_id)
@@ -82,8 +87,12 @@ export default function SidebarFriendRequests(props) {
     };
 
     console.log(friend_req_status);
-    socket.send(JSON.stringify(friend_req_status));
-  };
+    if (socket && socket.readyState === WebSocket.OPEN) { 
+      socket.send(JSON.stringify(friend_req_status));
+    } else {
+      console.error("WebSocket not Connected");
+      toast.error("Connection not ready. Please try again."); 
+    }  };
 
   return (
     <div className="position-fixed top-0 end-0 bg-white border-start sidebar-friend-requests">

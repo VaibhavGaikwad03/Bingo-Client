@@ -6,11 +6,15 @@ import Signup from "./Signup";
 import Chatpage from "./Chatpage.jsx";
 import { useEffect, useState, useRef } from "react";
 import { Status, MessageTypes } from "./Status_MessageTypes";
-import { LoginErrorCodes, SignupErrorCodes } from "./ErrorCodes";
+import {
+  LoginErrorCodes,
+  SignupErrorCodes,
+  ChangePasswordErrorCodes,
+} from "./ErrorCodes";
 import AboutUs from "./AboutUs.jsx";
 import Profile from "./Profile.jsx";
 import Settings from "./Settings.jsx";
-import CustomModal from "./CustomModal";
+import CustomAlertModal from "./CustomAlertModal";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -23,12 +27,24 @@ function App() {
 
   const [socket, setSocket] = useState(null);
 
-  const [currentUserId, setCurrentUserId] = useState("");
-  const [currentUsername, setCurrentUsername] = useState("");
-  const [currentNameOfUser, setCurrentNameOfUser] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(
+    () => parseInt(localStorage.getItem("currentUserId"),10) || -1
+  );
+  const [currentUsername, setCurrentUsername] = useState(
+    () => localStorage.getItem("currentUsername") || ""
+  );
+  const [currentNameOfUser, setCurrentNameOfUser] = useState(
+    localStorage.getItem("currentNameOfUser") || ""
+  );
 
   const [socketMessage, setSocketMessage] = useState("");
-  let [friendRequest, setFriendRequest] = useState([]);
+  // let [friendRequest, setFriendRequest] = useState([]);
+
+  let [friendRequest, setFriendRequest] = useState(() => {
+    const storedFriendRequest = localStorage.getItem("friendRequest");
+    return storedFriendRequest ? JSON.parse(storedFriendRequest) : [];
+  });
+
   const [message, setMessage] = useState("");
 
   // const [isAuth, setIsAuth] = useState(false);
@@ -36,12 +52,26 @@ function App() {
     () => localStorage.getItem("isAuth") === "true"
   );
 
-  const [userProfileInfo, setUserProfileInfo] = useState({});
+  // const [userProfileInfo, setUserProfileInfo] = useState({});
+  const [userProfileInfo, setUserProfileInfo] = useState(() => {
+    const storedUserProfileInfo = localStorage.getItem("userProfileInfo");
+    return storedUserProfileInfo ? JSON.parse(storedUserProfileInfo) : {};
+  });
+
   let [suggestions, setSuggestions] = useState([]);
 
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [modalErrorMessage, setModalErrorMessage] = useState("");
+  const [showAlertErrorModal, setShowAlertErrorModal] = useState(false);
+  const [modalAlertErrorMessage, setModalAlerErrorMessage] = useState("");
   // const [isAuth, setIsAuth] = useState(localStorage.getItem("isAuth") === "true");        change it later
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
+  
+  useEffect(() => {
+    document.body.className = theme; 
+    localStorage.setItem("theme", theme); 
+  }, [theme]); 
 
   const navigate = useNavigate();
   const timestamp = new Date().toISOString();
@@ -51,14 +81,43 @@ function App() {
   }
 
   const handleCloseErrorModal = () => {
-    setShowErrorModal(false);
-    setModalErrorMessage("");
+    setShowAlertErrorModal(false);
+    setModalAlerErrorMessage("");
   };
 
   useEffect(() => {
+    localStorage.setItem("currentUserId", currentUserId);
+  }, [currentUserId]);
+
+  useEffect(() => {
+    localStorage.setItem("currentUsername", currentUsername);
+  }, [currentUsername]);
+
+  useEffect(() => {
+    localStorage.setItem("currentNameOfUser", currentNameOfUser);
+  }, [currentNameOfUser]);
+
+  // useEffect(() => {
+  //   localStorage.setItem("userProfileInfo", userProfileInfo);
+  // }, [userProfileInfo]);
+
+  // useEffect(() => {
+  //   localStorage.setItem("friendRequest", friendRequest);
+  // }, [friendRequest]);
+  useEffect(() => {
+    localStorage.setItem("userProfileInfo", JSON.stringify(userProfileInfo));
+  }, [userProfileInfo]);
+
+  useEffect(() => {
+    localStorage.setItem("friendRequest", JSON.stringify(friendRequest));
+  }, [friendRequest]);
+
+
+
+  useEffect(() => {
     console.log("in useEffect");
-    // newSocket.current = new WebSocket("https://c2593c6b03ce.ngrok-free.app/");
-    newSocket.current = new WebSocket("ws://localhost:3001");
+    // newSocket.current = new WebSocket("https://b2c2d1430c81.ngrok-free.app/");
+    newSocket.current = new WebSocket("ws://localhost:2121");
     console.log("in useeffect ");
 
     newSocket.current.onopen = () => {
@@ -79,7 +138,7 @@ function App() {
               setMessage("Login Successfull");
               setIsAuth(true);
               localStorage.setItem("isAuth", "true");
-
+              // setTheme("dark");
               // setRequestingUser(parsedData);
               // localStorage.setItem("isAuth", "true");      //we will change it later
               clearMessage();
@@ -131,26 +190,32 @@ function App() {
           {
             console.log(parsedData, "Logout response");
             if (parsedData.status === Status.SUCCESS) {
-              setCurrentUserId(null);
-              setCurrentUsername(null);
-              setCurrentNameOfUser(null);
-              setSocketMessage(null);
-              setFriendRequest(null);
-              setMessage(null);
+              setCurrentUserId("");
+              setCurrentUsername("");
+              setCurrentNameOfUser("");
+              setSocketMessage("");
+              setFriendRequest([]);
+              setMessage("");
 
               setIsAuth(null);
               localStorage.removeItem("isAuth");
+              localStorage.removeItem("currentUserId");
+              localStorage.removeItem("currentUsername");
+              localStorage.removeItem("currentNameOfUser");
+              localStorage.removeItem("friendRequest");
+              localStorage.removeItem("userProfileInfo");
 
-              setUserProfileInfo(null);
-              setSuggestions(null);
-              setShowErrorModal(null);
-              setModalErrorMessage(null);
+              setUserProfileInfo({});
+              setSuggestions([]);
+              setShowAlertErrorModal(false);
+              setModalAlerErrorMessage("");
+              setTheme("light");
               navigate("/");
             } else if (parsedData.status === Status.ERROR) {
-              setModalErrorMessage(
+              setModalAlerErrorMessage(
                 "An error occurred while logging out. Please try again."
               );
-              setShowErrorModal(true);
+              setShowAlertErrorModal(true);
             }
           }
           break;
@@ -175,13 +240,22 @@ function App() {
             //   if (isAlreadyThere) return prev;
             //   return [...prev, parsedData];
             // });
-            setFriendRequest((prev) => [...prev, parsedData]);
-          }
-          break;
 
-        case MessageTypes.FRIEND_REQ_RESPONSE:
-          {
-            console.log(parsedData, "friend req response");
+
+            // setFriendRequest((prev) => [...prev, parsedData]);
+
+
+            setFriendRequest((prev) => {
+              const isAlreadyThere = prev.some(
+                (req) => req.sender_id === parsedData.sender_id
+              );
+              if (isAlreadyThere) {
+                console.log("Friend request already exists, not adding duplicate.");
+                return prev; // Return the previous state without modification
+              }
+              // If not already there, add the new request by creating a new array
+              return [...prev, parsedData];
+            });
           }
           break;
 
@@ -209,6 +283,21 @@ function App() {
         case MessageTypes.USER_MESSAGE_HISTORY:
           {
             console.log(parsedData, "user msg history");
+          }
+          break;
+
+        case MessageTypes.CHANGE_PASSWORD_RESPONSE:
+          {
+            console.log(parsedData, "Change password response");
+            if (parsedData.status == Status.SUCCESS) {
+              setMessage("Password changed successfully!");
+            } else if (parsedData.status == Status.ERROR) {
+              if (
+                parsedData.error_code == ChangePasswordErrorCodes.NEW_PASSWORD_MUST_BE_DIFFERENT
+              ) {
+                setMessage("New Password must be Different!");
+              }
+            }
           }
           break;
 
@@ -324,6 +413,9 @@ function App() {
                 suggestions={suggestions}
                 currentUserId={currentUserId}
                 timestamp={timestamp}
+                message={message}
+                setMessage={setMessage}
+                theme={theme} setTheme={setTheme}
                 // onLogoutButtonClick = {handleLogoutButtonClick}
               />
             </RequireAuth>
@@ -342,21 +434,21 @@ function App() {
           path="/settings"
           element={
             <RequireAuth isAuth={isAuth}>
-              <Settings />
+              <Settings theme={theme} setTheme={setTheme} />
             </RequireAuth>
           }
         />
       </Routes>
 
-      {showErrorModal && (
-        <CustomModal
+      {showAlertErrorModal && (
+        <CustomAlertModal
           title="Logout Error"
-          message={modalErrorMessage}
+          message={modalAlertErrorMessage}
           onClose={handleCloseErrorModal}
         />
       )}
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-center" autoClose={3000} />
     </>
   );
 }
