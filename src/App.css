@@ -1,3 +1,33 @@
+.chatpage-container {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.chat-sidebar {
+  min-width: 300px;
+  max-width: 350px;
+  border-right: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.chatpage-icon {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 body {
   margin: 0;
   padding: 0;

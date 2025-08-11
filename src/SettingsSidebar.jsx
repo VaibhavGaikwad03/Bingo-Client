@@ -54,6 +54,8 @@ export default function SettingsSidebar({
     <Settings
       theme={theme}
       setTheme={setTheme}
+      socket ={socket}
+      currentUserId={currentUserId}
       onClose={() => setSettingsView("")}
     />
   ) : (

@@ -28,20 +28,20 @@ function App() {
   const [socket, setSocket] = useState(null);
 
   const [currentUserId, setCurrentUserId] = useState(
-    () => parseInt(localStorage.getItem("currentUserId"),10) || -1
+    () => parseInt(sessionStorage.getItem("currentUserId"),10) || -1
   );
   const [currentUsername, setCurrentUsername] = useState(
-    () => localStorage.getItem("currentUsername") || ""
+    () => sessionStorage.getItem("currentUsername") || ""
   );
   const [currentNameOfUser, setCurrentNameOfUser] = useState(
-    localStorage.getItem("currentNameOfUser") || ""
+    sessionStorage.getItem("currentNameOfUser") || ""
   );
 
   const [socketMessage, setSocketMessage] = useState("");
   // let [friendRequest, setFriendRequest] = useState([]);
 
   let [friendRequest, setFriendRequest] = useState(() => {
-    const storedFriendRequest = localStorage.getItem("friendRequest");
+    const storedFriendRequest = sessionStorage.getItem("friendRequest");
     return storedFriendRequest ? JSON.parse(storedFriendRequest) : [];
   });
 
@@ -49,12 +49,12 @@ function App() {
 
   // const [isAuth, setIsAuth] = useState(false);
   const [isAuth, setIsAuth] = useState(
-    () => localStorage.getItem("isAuth") === "true"
+    () => sessionStorage.getItem("isAuth") === "true"
   );
 
   // const [userProfileInfo, setUserProfileInfo] = useState({});
   const [userProfileInfo, setUserProfileInfo] = useState(() => {
-    const storedUserProfileInfo = localStorage.getItem("userProfileInfo");
+    const storedUserProfileInfo = sessionStorage.getItem("userProfileInfo");
     return storedUserProfileInfo ? JSON.parse(storedUserProfileInfo) : {};
   });
 
@@ -62,15 +62,15 @@ function App() {
 
   const [showAlertErrorModal, setShowAlertErrorModal] = useState(false);
   const [modalAlertErrorMessage, setModalAlerErrorMessage] = useState("");
-  // const [isAuth, setIsAuth] = useState(localStorage.getItem("isAuth") === "true");        change it later
+  // const [isAuth, setIsAuth] = useState(sessionStorage.getItem("isAuth") === "true");        change it later
 
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") || "light";
+    return sessionStorage.getItem("theme") || "light";
   });
   
   useEffect(() => {
     document.body.className = theme; 
-    localStorage.setItem("theme", theme); 
+    sessionStorage.setItem("theme", theme); 
   }, [theme]); 
 
   const navigate = useNavigate();
@@ -86,37 +86,37 @@ function App() {
   };
 
   useEffect(() => {
-    localStorage.setItem("currentUserId", currentUserId);
+    sessionStorage.setItem("currentUserId", currentUserId);
   }, [currentUserId]);
 
   useEffect(() => {
-    localStorage.setItem("currentUsername", currentUsername);
+    sessionStorage.setItem("currentUsername", currentUsername);
   }, [currentUsername]);
 
   useEffect(() => {
-    localStorage.setItem("currentNameOfUser", currentNameOfUser);
+    sessionStorage.setItem("currentNameOfUser", currentNameOfUser);
   }, [currentNameOfUser]);
 
   // useEffect(() => {
-  //   localStorage.setItem("userProfileInfo", userProfileInfo);
+  //   sessionStorage.setItem("userProfileInfo", userProfileInfo);
   // }, [userProfileInfo]);
 
   // useEffect(() => {
-  //   localStorage.setItem("friendRequest", friendRequest);
+  //   sessionStorage.setItem("friendRequest", friendRequest);
   // }, [friendRequest]);
   useEffect(() => {
-    localStorage.setItem("userProfileInfo", JSON.stringify(userProfileInfo));
+    sessionStorage.setItem("userProfileInfo", JSON.stringify(userProfileInfo));
   }, [userProfileInfo]);
 
   useEffect(() => {
-    localStorage.setItem("friendRequest", JSON.stringify(friendRequest));
+    sessionStorage.setItem("friendRequest", JSON.stringify(friendRequest));
   }, [friendRequest]);
 
 
 
   useEffect(() => {
     console.log("in useEffect");
-    // newSocket.current = new WebSocket("https://b2c2d1430c81.ngrok-free.app/");
+    // newSocket.current = new WebSocket("https://23f8c2b513d7.ngrok-free.app/");
     newSocket.current = new WebSocket("ws://localhost:2121");
     console.log("in useeffect ");
 
@@ -137,10 +137,10 @@ function App() {
               setCurrentUserId(parsedData.user_id);
               setMessage("Login Successfull");
               setIsAuth(true);
-              localStorage.setItem("isAuth", "true");
+              sessionStorage.setItem("isAuth", "true");
               // setTheme("dark");
               // setRequestingUser(parsedData);
-              // localStorage.setItem("isAuth", "true");      //we will change it later
+              // sessionStorage.setItem("isAuth", "true");      //we will change it later
               clearMessage();
               navigate("/chatpage");
             } else if (parsedData.status === Status.ERROR) {
@@ -198,12 +198,12 @@ function App() {
               setMessage("");
 
               setIsAuth(null);
-              localStorage.removeItem("isAuth");
-              localStorage.removeItem("currentUserId");
-              localStorage.removeItem("currentUsername");
-              localStorage.removeItem("currentNameOfUser");
-              localStorage.removeItem("friendRequest");
-              localStorage.removeItem("userProfileInfo");
+              sessionStorage.removeItem("isAuth");
+              sessionStorage.removeItem("currentUserId");
+              sessionStorage.removeItem("currentUsername");
+              sessionStorage.removeItem("currentNameOfUser");
+              sessionStorage.removeItem("friendRequest");
+              sessionStorage.removeItem("userProfileInfo");
 
               setUserProfileInfo({});
               setSuggestions([]);

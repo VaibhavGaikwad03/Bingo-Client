@@ -1,10 +1,10 @@
-import React from "react"; 
+import React from "react";
 import { X } from "lucide-react";
 
 export default function Appearance({ onclose, theme, setTheme }) {
   // console.log("Theme:", theme);
   // console.log("setTheme:", setTheme);
-  
+
   const handleModeChange = (e) => {
     const newMode = e.target.value;
     setTheme(newMode);
@@ -44,11 +44,15 @@ export default function Appearance({ onclose, theme, setTheme }) {
           <X size={16} />
         </button>
 
-        <h5 className="mb-3 fw-bold text-center" style={{ color: textColor }}>Appearance Settings</h5>
+        <h5 className="mb-3 fw-bold text-center" style={{ color: textColor }}>
+          Appearance Settings
+        </h5>
 
         <form>
           <div className="mb-3">
-            <label className="form-label fw-bold" style={{ color: textColor }}>Select Mode</label>
+            <label className="form-label fw-bold" style={{ color: textColor }}>
+              Select Mode
+            </label>
             <select
               className="form-select mt-1"
               name="mode"
@@ -60,14 +64,15 @@ export default function Appearance({ onclose, theme, setTheme }) {
                 borderColor: borderColor,
               }}
             >
-              <option value="">-- Choose --</option>
-              <option value="dark">Dark Mode</option>
               <option value="light">Light Mode</option>
+              <option value="dark">Dark Mode</option>
             </select>
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-bold" style={{ color: textColor }}>Select Language</label>
+            <label className="form-label fw-bold" style={{ color: textColor }}>
+              Select Language
+            </label>
             <select
               className="form-select mt-1"
               name="language"

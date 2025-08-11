@@ -17,6 +17,7 @@ export default function Settings({
   return (
     <>
       <div className="settings-sidebar">
+        {console.log(socket,"socket in settings")}
         <div>
           {console.log("Theme in settings" , theme)}
           {console.log("set theme in settings" , setTheme)}

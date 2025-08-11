@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// import Profileedit from "./Profileedit"; // Profileedit is not used in the provided JSX
-// import Chatpage from "./Chatpage"; // Chatpage is not used in the provided JSX
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./CustomDatePicker.css";
+import {
+  validateName,
+  validateUsername,
+  validatePhone,
+  validateDOB,
+  validateEmail,
+} from "./Validations";
 
 export default function Profile(props) {
-  let { userProfileInfo } = props;
+  let { userProfileInfo, socket, timestamp } = props;
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
 
   const [formData, setFormData] = useState({
     fullname: userProfileInfo.fullname || "",
@@ -17,6 +28,8 @@ export default function Profile(props) {
     phone: userProfileInfo.phone || "",
   });
 
+  const [selectedDate, setSelectedDate] = useState(null);
+
   useEffect(() => {
     setFormData({
       fullname: userProfileInfo.fullname || "",
@@ -26,22 +39,154 @@ export default function Profile(props) {
       email: userProfileInfo.email || "",
       phone: userProfileInfo.phone || "",
     });
+    if (userProfileInfo.dob) {
+      setSelectedDate(new Date(userProfileInfo.dob));
+    } else {
+      setSelectedDate(null);
+    }
   }, [userProfileInfo]);
 
-  const handleChange = (e) => {
+  function clearMessage() {
+    setMessage("");
+  }
+
+  function handleChange(e) {
+    clearMessage();
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let error = "";
+    let validValue = value;
+
+    switch (name) {
+      case "fullname": {
+        const { value: validatedValue, error: validationError } =
+          validateName(value);
+        validValue = validatedValue;
+        error = validationError;
+        break;
+      }
+      case "username": {
+        const { newValue, error: validationError } = validateUsername(value);
+        validValue = newValue;
+        error = validationError;
+        break;
+      }
+      case "email": {
+        const { error: validationError } = validateEmail(value);
+        error = validationError;
+        break;
+      }
+      case "phone": {
+        const cleaned = value.replace(/\D/g, "");
+        validValue = cleaned;
+        if (cleaned.length > 0 && cleaned.length !== 10) {
+          error = "Phone number must be exactly 10 digits.";
+        } else {
+          error = "";
+        }
+        break;
+      }
+      case "gender": {
+        validValue = value;
+        break;
+      }
+      default:
+        break;
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: validValue }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  }
+
+  const handleDateChange = (date) => {
+    clearMessage();
+    setSelectedDate(date);
+    const formattedDate = date ? formatDate(date) : "";
+    const { error } = validateDOB(formattedDate);
+    setFormData((prev) => ({ ...prev, dob: formattedDate }));
+    setErrors((prev) => ({ ...prev, dob: error }));
+  };
+
+  const validateFormOnSubmit = () => {
+    const newErrors = {};
+
+    const nameValidation = validateName(formData.fullname);
+    if (nameValidation.error) newErrors.fullname = nameValidation.error;
+
+    const usernameValidation = validateUsername(formData.username);
+    if (usernameValidation.error) newErrors.username = usernameValidation.error;
+
+    const phoneValidation = validatePhone(formData.phone);
+    if (phoneValidation.error) newErrors.phone = phoneValidation.error;
+
+    const dobValidation = validateDOB(formData.dob);
+    if (dobValidation.error) newErrors.dob = dobValidation.error;
+
+    const emailValidation = validateEmail(formData.email);
+    if (emailValidation.error) newErrors.email = emailValidation.error;
+
+    const hasGender = !!formData.gender;
+    if (!hasGender) {
+      setMessage("Please select a gender.");
+      return false;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = () => {
-    console.log("Saved:", formData);
+    clearMessage();
+    if (validateFormOnSubmit()) {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        const updateData = {
+          message_type: "UPDATE_PROFILE_REQUEST", // Use a constant for message type
+          ...formData,
+          timestamp,
+        };
+        socket.send(JSON.stringify(updateData));
+        console.log("Sent update request:", updateData);
+        setMessage("Profile update request sent to the server.");
+        setIsEditing(false);
+      } else {
+        console.log("WebSocket not connected:", socket?.readyState);
+        setMessage("❌ Unable to connect to the server.");
+      }
+    } else {
+      setMessage("❌ Please correct the errors before saving.");
+    }
+  };
+
+  const handleCancel = () => {
     setIsEditing(false);
+    setErrors({});
+    setMessage("");
+    setFormData({
+      fullname: userProfileInfo.fullname || "",
+      username: userProfileInfo.username || "",
+      dob: userProfileInfo.dob || "",
+      gender: userProfileInfo.gender || "",
+      email: userProfileInfo.email || "",
+      phone: userProfileInfo.phone || "",
+    });
+    if (userProfileInfo.dob) {
+      setSelectedDate(new Date(userProfileInfo.dob));
+    } else {
+      setSelectedDate(null);
+    }
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   return (
     <div>
       <div
-        className="profile-page" // Add this class to your CSS for base styling
+        className="profile-page"
         style={{
           width: "100vw",
           minHeight: "100vh",
@@ -61,32 +206,35 @@ export default function Profile(props) {
             <div
               className="bi bi-arrow-left-circle"
               style={{
-                fontSize: "2rem",
+                fontSize: "1.8rem",
                 cursor: "pointer",
                 position: "absolute",
                 top: "10px",
                 left: "10px",
-                fontSize: "1.8rem",
               }}
               onClick={() => navigate("/chatpage")}
               title="Back"
             ></div>
           )}
-
           <div
             className="bi bi-pencil-square"
             style={{
-              fontSize: "2rem",
+              fontSize: "1.8rem",
               cursor: "pointer",
               position: "absolute",
               top: "10px",
               right: "10px",
-              fontSize: "1.8rem",
             }}
             onClick={() => setIsEditing(true)}
             title="Edit"
           ></div>
         </div>
+
+        {message && (
+          <div className="text-center mb-4 text-danger">
+            <em>{message}</em>
+          </div>
+        )}
 
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
           <img
@@ -102,7 +250,7 @@ export default function Profile(props) {
         </div>
 
         <div
-          className="form-wrapper" // Add a class for your form wrapper
+          className="form-wrapper"
           style={{
             width: "400px",
             margin: "0 auto",
@@ -119,9 +267,12 @@ export default function Profile(props) {
               name="fullname"
               value={formData.fullname}
               onChange={handleChange}
-              className="form-control" // Use Bootstrap's form-control class
+              className="form-control"
               disabled={!isEditing}
             />
+            {errors.fullname && (
+              <div className="text-danger">{errors.fullname}</div>
+            )}{" "}
           </label>
 
           <label className="form-label-custom">
@@ -131,22 +282,43 @@ export default function Profile(props) {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="form-control" // Use Bootstrap's form-control class
+              className="form-control"
               disabled={!isEditing}
             />
+            {errors.username && (
+              <div className="text-danger">{errors.username}</div>
+            )}{" "}
           </label>
 
           <div style={{ display: "flex", gap: "10px", width: "100%" }}>
             <label className="form-label-custom" style={{ flex: 1 }}>
               DOB
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                className="form-control" // Use Bootstrap's form-control class
-                disabled={!isEditing}
-              />
+              {isEditing ? (
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={handleDateChange}
+                  onKeyDown={(e) => {
+                    e.preventDefault();
+                  }}
+                  placeholderText="Date of Birth"
+                  className="form-control w-100"
+                  dateFormat="yyyy-MM-dd"
+                  maxDate={new Date()}
+                  showMonthDropdown
+                  showYearDropdown
+                  scrollableYearDropdown
+                  yearDropdownItemNumber={100}
+                />
+              ) : (
+                <input
+                  type="text"
+                  name="dob"
+                  value={formData.dob}
+                  readOnly
+                  className="form-control bg-light-grey"
+                />
+              )}
+              {errors.dob && <div className="text-danger">{errors.dob}</div>}{" "}
             </label>
 
             <label className="form-label-custom" style={{ flex: 1 }}>
@@ -156,8 +328,12 @@ export default function Profile(props) {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="form-select" // Use Bootstrap's form-select class
-                  style={{ appearance: "none", WebkitAppearance: "none", MozAppearance: "none" }}
+                  className="form-select"
+                  style={{
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                  }}
                 >
                   <option value="">Select</option>
                   <option value="Female">Female</option>
@@ -170,7 +346,7 @@ export default function Profile(props) {
                   name="gender"
                   value={formData.gender}
                   readOnly
-                  className="form-control bg-light-grey" // Use Bootstrap and your custom bg-light-grey for disabled state
+                  className="form-control bg-light-grey"
                 />
               )}
             </label>
@@ -184,8 +360,9 @@ export default function Profile(props) {
               value={formData.email}
               onChange={handleChange}
               disabled={!isEditing}
-              className="form-control" // Use Bootstrap's form-control class
+              className="form-control"
             />
+            {errors.email && <div className="text-danger">{errors.email}</div>}{" "}
           </label>
 
           <label className="form-label-custom">
@@ -196,25 +373,17 @@ export default function Profile(props) {
               value={formData.phone}
               onChange={handleChange}
               disabled={!isEditing}
-              className="form-control" // Use Bootstrap's form-control class
+              className="form-control"
             />
+            {errors.phone && <div className="text-danger">{errors.phone}</div>}
           </label>
 
           {isEditing && (
             <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
-              <button
-                onClick={() => {
-                  handleSave();
-                  setIsEditing(false);
-                }}
-                className="btn btn-success" // Use Bootstrap's btn-success for Save
-              >
+              <button onClick={handleSave} className="btn btn-success">
                 Save
               </button>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="btn btn-danger" // Use Bootstrap's btn-danger for Cancel
-              >
+              <button onClick={handleCancel} className="btn btn-danger">
                 Cancel
               </button>
             </div>
@@ -227,13 +396,34 @@ export default function Profile(props) {
 
 
 
+
+
+
+
+
+
+
+
 // import React, { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import "./CustomDatePicker.css";
+// import {
+//   validateName,
+//   validateUsername,
+//   validatePhone,
+//   validateDOB,
+//   validateEmail,
+// } from "./Validations";
 
 // export default function Profile(props) {
 //   let { userProfileInfo } = props;
 //   const navigate = useNavigate();
 //   const [isEditing, setIsEditing] = useState(false);
+
+//   const [errors, setErrors] = useState({});
+//   const [message, setMessage] = useState("");
 
 //   const [formData, setFormData] = useState({
 //     fullname: userProfileInfo.fullname || "",
@@ -244,6 +434,9 @@ export default function Profile(props) {
 //     phone: userProfileInfo.phone || "",
 //   });
 
+//   // New state to manage the Date object for the DatePicker
+//   const [selectedDate, setSelectedDate] = useState(null);
+
 //   useEffect(() => {
 //     setFormData({
 //       fullname: userProfileInfo.fullname || "",
@@ -253,69 +446,142 @@ export default function Profile(props) {
 //       email: userProfileInfo.email || "",
 //       phone: userProfileInfo.phone || "",
 //     });
+//     // Set the selectedDate state based on userProfileInfo.dob
+//     if (userProfileInfo.dob) {
+//       setSelectedDate(new Date(userProfileInfo.dob));
+//     } else {
+//       setSelectedDate(null);
+//     }
 //   }, [userProfileInfo]);
 
-//   const handleChange = (e) => {
+//   function clearMessage() {
+//     setMessage("");
+//   }
+
+//   function handleChange(e) {
+//     clearMessage();
 //     const { name, value } = e.target;
-//     setFormData((prev) => ({ ...prev, [name]: value }));
+//     let error = "";
+//     let validValue = value;
+
+//     if (name === "fullname") {
+//       const result = validateName(value);
+//       error = result.error;
+//       validValue = result.value;
+//     } else if (name === "email") {
+//       const result = validateEmail(value);
+//       error = result.error;
+//       validValue = result.value;
+//     } else if (name === "phone") {
+//       const cleaned = value.replace(/\D/g, "");
+//       if (cleaned.length > 0 && cleaned.length !== 10) {
+//         error = "Phone number must be exactly 10 digits.";
+//       }
+//       validValue = cleaned;
+//     } else if (name === "dob") {
+//       // The handleChange function will not be used for the DatePicker,
+//       // so this block is not strictly needed for the DatePicker itself,
+//       // but it's good to keep it consistent.
+//       const result = validateDOB(value);
+//       error = result.error;
+//       validValue = result.value;
+//     } else if (name === "username") {
+//       const result = validateUsername(value);
+//       error = result.error;
+//       validValue = result.newValue;
+//     }
+
+//     setFormData((prev) => ({ ...prev, [name]: validValue }));
+//     setErrors((prev) => ({ ...prev, [name]: error }));
+//   }
+
+//   // New function to handle date changes from the DatePicker
+//   const handleDateChange = (date) => {
+//     clearMessage();
+//     setSelectedDate(date);
+//     const formattedDate = date ? formatDate(date) : "";
+//     const dobValidation = validateDOB(formattedDate);
+//     setFormData((prev) => ({ ...prev, dob: formattedDate }));
+//     setErrors((prev) => ({ ...prev, dob: dobValidation.error }));
+//   };
+
+//   const validateFormOnSubmit = () => {
+//     const newErrors = {};
+//     const nameValidation = validateName(formData.fullname);
+
+//     if (!nameValidation.isValid) newErrors.fullname = nameValidation.error;
+//     const usernameValidation = validateUsername(formData.username);
+
+//     if (usernameValidation.error) newErrors.username = usernameValidation.error;
+
+//     const phoneValidation = validatePhone(formData.phone);
+//     if (!phoneValidation.isValid) newErrors.phone = phoneValidation.error;
+
+//     const dobValidation = validateDOB(formData.dob);
+//     if (!dobValidation.isValid) newErrors.dob = dobValidation.error;
+
+//     const emailValidation = validateEmail(formData.email);
+//     if (!emailValidation.isValid) newErrors.email = emailValidation.error;
+
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
 //   };
 
 //   const handleSave = () => {
-//     console.log("Saved:", formData);
+//     clearMessage();
+//     if (validateFormOnSubmit()) {
+//       console.log("Saved:", formData);
+//       setIsEditing(false);
+//       setMessage("Profile updated successfully!");
+//     } else {
+//       setMessage("❌ Please correct the errors before saving.");
+//     }
+//   };
+
+//   const handleCancel = () => {
 //     setIsEditing(false);
+//     setErrors({});
+//     setMessage("");
+//     setFormData({
+//       fullname: userProfileInfo.fullname || "",
+//       username: userProfileInfo.username || "",
+//       dob: userProfileInfo.dob || "",
+//       gender: userProfileInfo.gender || "",
+//       email: userProfileInfo.email || "",
+//       phone: userProfileInfo.phone || "",
+//     });
+//     if (userProfileInfo.dob) {
+//       setSelectedDate(new Date(userProfileInfo.dob));
+//     } else {
+//       setSelectedDate(null);
+//     }
 //   };
 
-//   const pageStyle = {
-//     width: "100vw",
-//     minHeight: "100vh",
-//     backgroundColor: "#fff",
-//     padding: "20px",
-//     boxSizing: "border-box",
-//   };
-
-//   const formWrapper = {
-//     width: "400px",
-//     margin: "0 auto",
-//     display: "flex",
-//     flexDirection: "column",
-//     gap: "15px",
-//     alignItems: "center",
-//   };
-
-//   const inputStyle = {
-//     padding: "10px 12px",
-//     border: "1px solid black",
-//     borderRadius: "10px",
-//     fontSize: "14px",
-//     backgroundColor: "#fff",
-//     color: "#000",
-//     width: "100%",
-//   };
-
-//   const labelStyle = {
-//     display: "flex",
-//     flexDirection: "column",
-//     fontSize: "13px",
-//     color: "#000",
-//     width: "100%",
-//   };
-
-//   const btn = {
-//     padding: "8px 20px",
-//     borderRadius: "8px",
-//     border: "1px solid",
-//     fontWeight: "bold",
-//     cursor: "pointer",
+//   // Helper function to format the date in 'YYYY-MM-DD' format
+//   const formatDate = (date) => {
+//     if (!date) return "";
+//     const year = date.getFullYear();
+//     const month = (date.getMonth() + 1).toString().padStart(2, "0");
+//     const day = date.getDate().toString().padStart(2, "0");
+//     return `${year}-${month}-${day}`;
 //   };
 
 //   return (
 //     <div>
-//       <div className="profile-page" style={pageStyle}>
+//       <div
+//         className="profile-page"
+//         style={{
+//           width: "100vw",
+//           minHeight: "100vh",
+//           padding: "20px",
+//           boxSizing: "border-box",
+//         }}
+//       >
 //         <div
 //           style={{
 //             width: "100%",
 //             margin: "0 auto",
-//             position: "relative", // ✅ for positioning child icons
+//             position: "relative",
 //             padding: "10px",
 //           }}
 //         >
@@ -323,34 +589,35 @@ export default function Profile(props) {
 //             <div
 //               className="bi bi-arrow-left-circle"
 //               style={{
-//                 fontSize: "2rem",
+//                 fontSize: "1.8rem",
 //                 cursor: "pointer",
 //                 position: "absolute",
 //                 top: "10px",
 //                 left: "10px",
-//                 fontSize: "1.8rem",
 //               }}
 //               onClick={() => navigate("/chatpage")}
-//               // onClick={() => setIsEditing(false)}
 //               title="Back"
 //             ></div>
 //           )}
-
 //           <div
 //             className="bi bi-pencil-square"
 //             style={{
-//               fontSize: "2rem",
+//               fontSize: "1.8rem",
 //               cursor: "pointer",
 //               position: "absolute",
 //               top: "10px",
 //               right: "10px",
-//               fontSize: "1.8rem",
 //             }}
-//             // onClick={() => setProfileView("profile_edit")}
 //             onClick={() => setIsEditing(true)}
 //             title="Edit"
 //           ></div>
 //         </div>
+
+//         {message && (
+//           <div className="text-center mb-4 text-danger">
+//             <em>{message}</em>
+//           </div>
+//         )}
 
 //         <div style={{ textAlign: "center", marginBottom: "20px" }}>
 //           <img
@@ -365,54 +632,88 @@ export default function Profile(props) {
 //           />
 //         </div>
 
-//         <div style={formWrapper}>
-//           <label style={labelStyle}>
+//         <div
+//           className="form-wrapper"
+//           style={{
+//             width: "400px",
+//             margin: "0 auto",
+//             display: "flex",
+//             flexDirection: "column",
+//             gap: "15px",
+//             alignItems: "center",
+//           }}
+//         >
+//           <label className="form-label-custom">
 //             Name
 //             <input
 //               type="text"
 //               name="fullname"
 //               value={formData.fullname}
 //               onChange={handleChange}
-//               style={inputStyle}
+//               className="form-control"
 //               disabled={!isEditing}
 //             />
+//             {errors.fullname && (
+//               <div className="text-danger">{errors.fullname}</div>
+//             )}{" "}
 //           </label>
 
-//           <label style={labelStyle}>
+//           <label className="form-label-custom">
 //             Username
 //             <input
 //               type="text"
 //               name="username"
 //               value={formData.username}
 //               onChange={handleChange}
-//               style={inputStyle}
+//               className="form-control"
 //               disabled={!isEditing}
 //             />
+//             {errors.username && (
+//               <div className="text-danger">{errors.username}</div>
+//             )}{" "}
 //           </label>
 
 //           <div style={{ display: "flex", gap: "10px", width: "100%" }}>
-//             <label style={{ ...labelStyle, flex: 1 }}>
+//             <label className="form-label-custom" style={{ flex: 1 }}>
 //               DOB
-//               <input
-//                 type="date"
-//                 name="dob"
-//                 value={formData.dob}
-//                 onChange={handleChange}
-//                 style={inputStyle}
-//                 disabled={!isEditing}
-//               />
+//               {isEditing ? (
+//                 <DatePicker
+//                   selected={selectedDate}
+//                   onChange={handleDateChange}
+//                   onKeyDown={(e) => {
+//                     e.preventDefault();
+//                   }}
+//                   placeholderText="Date of Birth"
+//                   className="form-control w-100"
+//                   dateFormat="yyyy-MM-dd"
+//                   maxDate={new Date()}
+//                   showMonthDropdown
+//                   showYearDropdown
+//                   scrollableYearDropdown
+//                   yearDropdownItemNumber={100}
+//                 />
+//               ) : (
+//                 <input
+//                   type="text"
+//                   name="dob"
+//                   value={formData.dob}
+//                   readOnly
+//                   className="form-control bg-light-grey"
+//                 />
+//               )}
+//               {errors.dob && <div className="text-danger">{errors.dob}</div>}{" "}
 //             </label>
 
-//             <label style={{ ...labelStyle, flex: 1 }}>
+//             <label className="form-label-custom" style={{ flex: 1 }}>
 //               Gender
 //               {isEditing ? (
 //                 <select
 //                   name="gender"
 //                   value={formData.gender}
 //                   onChange={handleChange}
+//                   className="form-select"
 //                   style={{
-//                     ...inputStyle,
-//                     appearance: "none", // optional: removes default arrow styles
+//                     appearance: "none",
 //                     WebkitAppearance: "none",
 //                     MozAppearance: "none",
 //                   }}
@@ -428,13 +729,13 @@ export default function Profile(props) {
 //                   name="gender"
 //                   value={formData.gender}
 //                   readOnly
-//                   style={{ ...inputStyle, backgroundColor: "#f0f0f0" }}
+//                   className="form-control bg-light-grey"
 //                 />
 //               )}
 //             </label>
 //           </div>
 
-//           <label style={labelStyle}>
+//           <label className="form-label-custom">
 //             Email
 //             <input
 //               type="email"
@@ -442,11 +743,12 @@ export default function Profile(props) {
 //               value={formData.email}
 //               onChange={handleChange}
 //               disabled={!isEditing}
-//               style={inputStyle}
+//               className="form-control"
 //             />
+//             {errors.email && <div className="text-danger">{errors.email}</div>}{" "}
 //           </label>
 
-//           <label style={labelStyle}>
+//           <label className="form-label-custom">
 //             Phone
 //             <input
 //               type="text"
@@ -454,34 +756,17 @@ export default function Profile(props) {
 //               value={formData.phone}
 //               onChange={handleChange}
 //               disabled={!isEditing}
-//               style={inputStyle}
+//               className="form-control"
 //             />
+//             {errors.phone && <div className="text-danger">{errors.phone}</div>}
 //           </label>
 
 //           {isEditing && (
 //             <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
-//               <button
-//                 onClick={() => {
-//                   handleSave(), setIsEditing(false);
-//                 }}
-//                 style={{
-//                   ...btn,
-//                   backgroundColor: "#b5f5b5",
-//                   borderColor: "green",
-//                   color: "green",
-//                 }}
-//               >
+//               <button onClick={handleSave} className="btn btn-success">
 //                 Save
 //               </button>
-//               <button
-//                 onClick={() => setIsEditing(false)}
-//                 style={{
-//                   ...btn,
-//                   backgroundColor: "#ffd4d4",
-//                   borderColor: "red",
-//                   color: "red",
-//                 }}
-//               >
+//               <button onClick={handleCancel} className="btn btn-danger">
 //                 Cancel
 //               </button>
 //             </div>
@@ -501,152 +786,384 @@ export default function Profile(props) {
 
 
 
+//mostrecent working code
 
-// // import React, { useState } from "react";
-// // import { useNavigate } from "react-router-dom";
-// // import Profileedit from "./Profileedit";
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import "./CustomDatePicker.css";
+// import {
+//   validateName,
+//   validateUsername,
+//   validatePhone,
+//   validateDOB,
+//   validateEmail,
+// } from "./Validations";
 
-// // export default function Profile(props) {
-// //   let { userProfileInfo } = props;
-// //   let [profileView, setProfileView] = useState("profile");
-// //   const navigate = useNavigate();
+// export default function Profile(props) {
+//   let { userProfileInfo } = props;
+//   const navigate = useNavigate();
+//   const [isEditing, setIsEditing] = useState(false);
 
-// //   return (
-// //     <>
-// //       {profileView == "profile" && (
-// //         <>
-// //           <div
-// //             className="profile-page"
-// //             style={{
-// //               width: "100vw",
-// //               height: "100vh",
-// //               backgroundColor: "white",
-// //               padding: "20px",
-// //               boxSizing: "border-box",
-// //             }}
-// //           >
-// //             <div
-// //               style={{
-// //                 display: "flex",
-// //                 justifyContent: "space-between",
-// //                 alignItems: "center",
-// //                 marginBottom: "20px",
-// //               }}
-// //             >
-// //               <div
-// //                 className="bi bi-arrow-left-circle"
-// //                 style={{ fontSize: "2rem", cursor: "pointer" }}
-// //                 onClick={() => navigate("/chatpage")}
-// //               ></div>
+//   const [errors, setErrors] = useState({});
+//   const [message, setMessage] = useState("");
 
-// //               <div
-// //                 className="bi bi-pencil-square"
-// //                 style={{ fontSize: "2rem", cursor: "pointer" }}
-// //                 onClick={() => setProfileView("profile_edit")}
-// //               ></div>
-// //             </div>
+//   const [formData, setFormData] = useState({
+//     fullname: userProfileInfo.fullname || "",
+//     username: userProfileInfo.username || "",
+//     dob: userProfileInfo.dob || "",
+//     gender: userProfileInfo.gender || "",
+//     email: userProfileInfo.email || "",
+//     phone: userProfileInfo.phone || "",
+//   });
 
-// //             <div style={{ textAlign: "center", marginBottom: "20px" }}>
-// //               <img
-// //                 className="circular-image"
-// //                 src="/images/icons/user.png"
-// //                 alt="Profile"
-// //                 style={{
-// //                   width: "150px",
-// //                   height: "150px",
-// //                   borderRadius: "50%",
-// //                   objectFit: "cover",
-// //                 }}
-// //               />
-// //             </div>
+//   // New state to manage the Date object for the DatePicker
+//   const [selectedDate, setSelectedDate] = useState(null);
 
-// //             <div style={{ textAlign: "center", marginBottom: "10px" }}>
-// //               <h4>Username</h4>
-// //               <div
-// //                 style={{
-// //                   display: "inline-block",
-// //                   padding: "5px 15px",
-// //                   border: "1px solid black",
-// //                   width: "250px",
-// //                   textAlign: "center",
-// //                 }}
-// //               >
-// //                 {userProfileInfo.username}
-// //               </div>
-// //             </div>
+//   useEffect(() => {
+//     setFormData({
+//       fullname: userProfileInfo.fullname || "",
+//       username: userProfileInfo.username || "",
+//       dob: userProfileInfo.dob || "",
+//       gender: userProfileInfo.gender || "",
+//       email: userProfileInfo.email || "",
+//       phone: userProfileInfo.phone || "",
+//     });
+//     // Set the selectedDate state based on userProfileInfo.dob
+//     if (userProfileInfo.dob) {
+//       setSelectedDate(new Date(userProfileInfo.dob));
+//     } else {
+//       setSelectedDate(null);
+//     }
+//   }, [userProfileInfo]);
 
-// //             <div style={{ textAlign: "center", marginBottom: "10px" }}>
-// //               <h4>Name</h4>
-// //               <div
-// //                 style={{
-// //                   display: "inline-block",
-// //                   padding: "5px 15px",
-// //                   border: "1px solid black",
-// //                   width: "250px",
-// //                   textAlign: "center",
-// //                 }}
-// //               >
-// //                 {userProfileInfo.fullname}
-// //               </div>
-// //             </div>
+//   function clearMessage() {
+//     setMessage("");
+//   }
 
-// //             <div
-// //               style={{
-// //                 display: "flex",
-// //                 justifyContent: "center",
-// //                 gap: "20px",
-// //                 marginBottom: "20px",
-// //               }}
-// //             >
-// //               <div style={{ textAlign: "center" }}>
-// //                 <h4>DOB</h4>
-// //                 <div
-// //                   style={{
-// //                     padding: "5px 10px",
-// //                     border: "1px solid black",
-// //                     width: "100px",
-// //                   }}
-// //                 >
-// //                   {userProfileInfo.dob || "N/A"}
-// //                 </div>
-// //               </div>
-// //               <div style={{ textAlign: "center" }}>
-// //                 <h4>Gender</h4>
-// //                 <div
-// //                   style={{
-// //                     padding: "5px 10px",
-// //                     border: "1px solid black",
-// //                     width: "100px",
-// //                   }}
-// //                 >
-// //                   {userProfileInfo.gender || "N/A"}
-// //                 </div>
-// //               </div>
-// //             </div>
+//   function handleChange(e) {
+//     clearMessage();
+//     const { name, value } = e.target;
+//     let error = "";
+//     let validValue = value;
 
-// //             <div style={{ textAlign: "center", marginTop: "20px" }}>
-// //               <h4>Bio</h4>
-// //               <div
-// //                 style={{
-// //                   display: "inline-block",
-// //                   padding: "5px 15px",
-// //                   border: "1px solid black",
-// //                   maxWidth: "80%",
-// //                 }}
-// //               >
-// //                 {userProfileInfo.bio || "No bio added yet."}
-// //               </div>
-// //             </div>
-// //           </div>
-// //         </>
-// //       )}
-// //       {
-// //         profileView == "profile_edit" && (
-// //           <Profileedit userProfileInfo={userProfileInfo}
-// //           setProfileView = {setProfileView}
-// //           />
-// //         )
-// //       }
-// //     </>
-// //   );
-// // }
+//     if (name === "fullname") {
+//       const result = validateName(value);
+//       error = result.error;
+//       validValue = result.value;
+//     } else if (name === "email") {
+//       const result = validateEmail(value);
+//       error = result.error;
+//       validValue = result.value;
+//     } else if (name === "phone") {
+//       const cleaned = value.replace(/\D/g, "");
+//       if (cleaned.length > 0 && cleaned.length !== 10) {
+//         error = "Phone number must be exactly 10 digits.";
+//       }
+//       validValue = cleaned;
+//     } else if (name === "dob") {
+//       // The handleChange function will not be used for the DatePicker,
+//       // so this block is not strictly needed for the DatePicker itself,
+//       // but it's good to keep it consistent.
+//       const result = validateDOB(value);
+//       error = result.error;
+//       validValue = result.value;
+//     } else if (name === "username") {
+//       const result = validateUsername(value);
+//       error = result.error;
+//       validValue = result.newValue;
+//     }
+
+//     setFormData((prev) => ({ ...prev, [name]: validValue }));
+//     setErrors((prev) => ({ ...prev, [name]: error }));
+//   }
+
+//   // New function to handle date changes from the DatePicker
+//   const handleDateChange = (date) => {
+//     clearMessage();
+//     setSelectedDate(date);
+//     const formattedDate = date ? formatDate(date) : "";
+//     const dobValidation = validateDOB(formattedDate);
+//     setFormData((prev) => ({ ...prev, dob: formattedDate }));
+//     setErrors((prev) => ({ ...prev, dob: dobValidation.error }));
+//   };
+
+//   const validateFormOnSubmit = () => {
+//     const newErrors = {};
+//     const nameValidation = validateName(formData.fullname);
+
+//     if (!nameValidation.isValid) newErrors.fullname = nameValidation.error;
+//     const usernameValidation = validateUsername(formData.username);
+
+//     if (usernameValidation.error) newErrors.username = usernameValidation.error;
+
+//     const phoneValidation = validatePhone(formData.phone);
+//     if (!phoneValidation.isValid) newErrors.phone = phoneValidation.error;
+
+//     const dobValidation = validateDOB(formData.dob);
+//     if (!dobValidation.isValid) newErrors.dob = dobValidation.error;
+
+//     const emailValidation = validateEmail(formData.email);
+//     if (!emailValidation.isValid) newErrors.email = emailValidation.error;
+
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+//   const handleSave = () => {
+//     clearMessage();
+//     if (validateFormOnSubmit()) {
+//       console.log("Saved:", formData);
+//       setIsEditing(false);
+//       setMessage("Profile updated successfully!");
+//     } else {
+//       setMessage("❌ Please correct the errors before saving.");
+//     }
+//   };
+
+//   const handleCancel = () => {
+//     setIsEditing(false);
+//     setErrors({});
+//     setMessage("");
+//     setFormData({
+//       fullname: userProfileInfo.fullname || "",
+//       username: userProfileInfo.username || "",
+//       dob: userProfileInfo.dob || "",
+//       gender: userProfileInfo.gender || "",
+//       email: userProfileInfo.email || "",
+//       phone: userProfileInfo.phone || "",
+//     });
+//     if (userProfileInfo.dob) {
+//       setSelectedDate(new Date(userProfileInfo.dob));
+//     } else {
+//       setSelectedDate(null);
+//     }
+//   };
+
+//   // Helper function to format the date in 'YYYY-MM-DD' format
+//   const formatDate = (date) => {
+//     if (!date) return "";
+//     const year = date.getFullYear();
+//     const month = (date.getMonth() + 1).toString().padStart(2, "0");
+//     const day = date.getDate().toString().padStart(2, "0");
+//     return `${year}-${month}-${day}`;
+//   };
+
+//   return (
+//     <div>
+//       <div
+//         className="profile-page"
+//         style={{
+//           width: "100vw",
+//           minHeight: "100vh",
+//           padding: "20px",
+//           boxSizing: "border-box",
+//         }}
+//       >
+//         <div
+//           style={{
+//             width: "100%",
+//             margin: "0 auto",
+//             position: "relative",
+//             padding: "10px",
+//           }}
+//         >
+//           {!isEditing && (
+//             <div
+//               className="bi bi-arrow-left-circle"
+//               style={{
+//                 fontSize: "1.8rem",
+//                 cursor: "pointer",
+//                 position: "absolute",
+//                 top: "10px",
+//                 left: "10px",
+//               }}
+//               onClick={() => navigate("/chatpage")}
+//               title="Back"
+//             ></div>
+//           )}
+//           <div
+//             className="bi bi-pencil-square"
+//             style={{
+//               fontSize: "1.8rem",
+//               cursor: "pointer",
+//               position: "absolute",
+//               top: "10px",
+//               right: "10px",
+//             }}
+//             onClick={() => setIsEditing(true)}
+//             title="Edit"
+//           ></div>
+//         </div>
+
+//         {message && (
+//           <div className="text-center mb-4 text-danger">
+//             <em>{message}</em>
+//           </div>
+//         )}
+
+//         <div style={{ textAlign: "center", marginBottom: "20px" }}>
+//           <img
+//             src="/images/good_baby_pfp.jpeg"
+//             alt="Profile"
+//             style={{
+//               width: "150px",
+//               height: "150px",
+//               borderRadius: "50%",
+//               objectFit: "cover",
+//             }}
+//           />
+//         </div>
+
+//         <div
+//           className="form-wrapper"
+//           style={{
+//             width: "400px",
+//             margin: "0 auto",
+//             display: "flex",
+//             flexDirection: "column",
+//             gap: "15px",
+//             alignItems: "center",
+//           }}
+//         >
+//           <label className="form-label-custom">
+//             Name
+//             <input
+//               type="text"
+//               name="fullname"
+//               value={formData.fullname}
+//               onChange={handleChange}
+//               className="form-control"
+//               disabled={!isEditing}
+//             />
+//             {errors.fullname && (
+//               <div className="text-danger">{errors.fullname}</div>
+//             )}{" "}
+//           </label>
+
+//           <label className="form-label-custom">
+//             Username
+//             <input
+//               type="text"
+//               name="username"
+//               value={formData.username}
+//               onChange={handleChange}
+//               className="form-control"
+//               disabled={!isEditing}
+//             />
+//             {errors.username && (
+//               <div className="text-danger">{errors.username}</div>
+//             )}{" "}
+//           </label>
+
+//           <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+//             <label className="form-label-custom" style={{ flex: 1 }}>
+//               DOB
+//               {isEditing ? (
+//                 <DatePicker
+//                   selected={selectedDate}
+//                   onChange={handleDateChange}
+//                   onKeyDown={(e) => {
+//                     e.preventDefault();
+//                   }}
+//                   placeholderText="Date of Birth"
+//                   className="form-control w-100"
+//                   dateFormat="yyyy-MM-dd"
+//                   maxDate={new Date()}
+//                   showMonthDropdown
+//                   showYearDropdown
+//                   scrollableYearDropdown
+//                   yearDropdownItemNumber={100}
+//                 />
+//               ) : (
+//                 <input
+//                   type="text"
+//                   name="dob"
+//                   value={formData.dob}
+//                   readOnly
+//                   className="form-control bg-light-grey"
+//                 />
+//               )}
+//               {errors.dob && <div className="text-danger">{errors.dob}</div>}{" "}
+//             </label>
+
+//             <label className="form-label-custom" style={{ flex: 1 }}>
+//               Gender
+//               {isEditing ? (
+//                 <select
+//                   name="gender"
+//                   value={formData.gender}
+//                   onChange={handleChange}
+//                   className="form-select"
+//                   style={{
+//                     appearance: "none",
+//                     WebkitAppearance: "none",
+//                     MozAppearance: "none",
+//                   }}
+//                 >
+//                   <option value="">Select</option>
+//                   <option value="Female">Female</option>
+//                   <option value="Male">Male</option>
+//                   <option value="Other">Other</option>
+//                 </select>
+//               ) : (
+//                 <input
+//                   type="text"
+//                   name="gender"
+//                   value={formData.gender}
+//                   readOnly
+//                   className="form-control bg-light-grey"
+//                 />
+//               )}
+//             </label>
+//           </div>
+
+//           <label className="form-label-custom">
+//             Email
+//             <input
+//               type="email"
+//               name="email"
+//               value={formData.email}
+//               onChange={handleChange}
+//               disabled={!isEditing}
+//               className="form-control"
+//             />
+//             {errors.email && <div className="text-danger">{errors.email}</div>}{" "}
+//           </label>
+
+//           <label className="form-label-custom">
+//             Phone
+//             <input
+//               type="text"
+//               name="phone"
+//               value={formData.phone}
+//               onChange={handleChange}
+//               disabled={!isEditing}
+//               className="form-control"
+//             />
+//             {errors.phone && <div className="text-danger">{errors.phone}</div>}
+//           </label>
+
+//           {isEditing && (
+//             <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
+//               <button onClick={handleSave} className="btn btn-success">
+//                 Save
+//               </button>
+//               <button onClick={handleCancel} className="btn btn-danger">
+//                 Cancel
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
