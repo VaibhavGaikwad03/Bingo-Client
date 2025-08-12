@@ -116,7 +116,7 @@ function App() {
 
   useEffect(() => {
     console.log("in useEffect");
-    // newSocket.current = new WebSocket("https://23f8c2b513d7.ngrok-free.app/");
+    // newSocket.current = new WebSocket("https://2fb35f9bd8fd.ngrok-free.app/");
     newSocket.current = new WebSocket("ws://localhost:2121");
     console.log("in useeffect ");
 
@@ -197,7 +197,7 @@ function App() {
               setFriendRequest([]);
               setMessage("");
 
-              setIsAuth(null);
+              setIsAuth(false);
               sessionStorage.removeItem("isAuth");
               sessionStorage.removeItem("currentUserId");
               sessionStorage.removeItem("currentUsername");
@@ -322,7 +322,7 @@ function App() {
     setSocket(newSocket.current);
 
     return () => {
-      if (newSocket.current.readyState === WebSocket.OPEN)
+      if (newSocket.current)
         newSocket.current.close();
     };
   }, []);

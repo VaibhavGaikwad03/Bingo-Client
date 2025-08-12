@@ -162,12 +162,12 @@ export default function SidebarFriendRequests(props) {
             <p className="text-muted mt-3">No pending requests.</p>
           )}
 
-          <img
+          {/* <img
             src="/images/icons/bell.png"
             alt=""
             className="bottom-bell"
             onClick={() => setRequestView("notification")}
-          />
+          /> */}
         </>
       )}
 
