@@ -2,8 +2,6 @@ import React from "react";
 import { X } from "lucide-react";
 
 export default function Appearance({ onclose, theme, setTheme }) {
-  // console.log("Theme:", theme);
-  // console.log("setTheme:", setTheme);
 
   const handleModeChange = (e) => {
     const newMode = e.target.value;
