@@ -1,7 +1,8 @@
 import React from "react";
-import { X } from "lucide-react";
 
-export default function Appearance({ onclose, theme, setTheme }) {
+export default function Appearance({  theme, setTheme }) {
+  // console.log("Theme:", theme);
+  // console.log("setTheme:", setTheme);
 
   const handleModeChange = (e) => {
     const newMode = e.target.value;
@@ -31,17 +32,7 @@ export default function Appearance({ onclose, theme, setTheme }) {
           borderColor: borderColor,
         }}
       >
-        <button
-          onClick={onclose}
-          className="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2"
-          style={{
-            color: textColor,
-            borderColor: borderColor,
-          }}
-        >
-          <X size={16} />
-        </button>
-
+      
         <h5 className="mb-3 fw-bold text-center" style={{ color: textColor }}>
           Appearance Settings
         </h5>

@@ -47,6 +47,10 @@ export const validateUsername = (inputValue) => {
     if (cleaned.length < 4 || letterCount < 2) {
       error = "Username must have at least 2 letters and 4 total characters.";
     }
+    else if (cleaned.length > 25) {
+      error = "Username must not exceed 25 characters.";
+    }
+    
   }
 
   return {

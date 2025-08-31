@@ -19,6 +19,7 @@ export default function Login(props) {
   }
 
   function handleButtonSignup() {
+    clearMessage();
     navigate("/signup");
   }
 
