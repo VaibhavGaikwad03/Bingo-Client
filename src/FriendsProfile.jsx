@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function FriendsProfile(props) {
-  let { setShowProfileSidebar, theme } = props;
+  let { setShowProfileSidebar, theme , setShowImageModal, setModalImageSrc } = props;
   return (
     <>
       <div
@@ -20,12 +20,28 @@ export default function FriendsProfile(props) {
 
         <div className="p-4">
           <div className="text-center mb-4">
-            <img
+            {/* <img
               src="/images/good_baby_pfp.jpeg"
               alt="Profile"
               className="rounded-circle"
               style={{ width: 150, height: 150, objectFit: "cover" }}
+            /> */}
+            <img
+              src="/images/good_baby_pfp.jpeg"
+              alt="Profile"
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setModalImageSrc("/images/good_baby_pfp.jpeg");
+                setShowImageModal(true);
+              }}
             />
+
             <h4 className="mt-3">Contact Name</h4>
             <p className="text-muted">Online</p>
           </div>

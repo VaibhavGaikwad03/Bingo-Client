@@ -116,8 +116,8 @@ function App() {
 
   useEffect(() => {
     console.log("in useEffect");
-    // newSocket.current = new WebSocket("https://6e35dc562512.ngrok-free.app/");
-    newSocket.current = new WebSocket("ws://localhost:2121");
+    newSocket.current = new WebSocket("https://04444a3f3e31.ngrok-free.app/");
+    // newSocket.current = new WebSocket("ws://localhost:2121");
     console.log("in useeffect ");
 
     newSocket.current.onopen = () => {
@@ -193,7 +193,7 @@ function App() {
               setCurrentUserId("");
               setCurrentUsername("");
               setCurrentNameOfUser("");
-              setSocketMessage("");
+              // setSocketMessage("");
               setFriendRequest([]);
               setMessage("");
 
@@ -211,6 +211,9 @@ function App() {
               setModalAlerErrorMessage("");
               setTheme("light");
               navigate("/");
+              // if (newSocket.current) {
+              //   newSocket.current.close();
+              // }
             } else if (parsedData.status === Status.ERROR) {
               setModalAlerErrorMessage(
                 "An error occurred while logging out. Please try again."
@@ -347,7 +350,7 @@ function App() {
           style={{
             position: "fixed",
             bottom: 20,
-            right: 20,
+            left: 20,
             padding: "6px 12px",
             borderRadius: 30,
             background:
