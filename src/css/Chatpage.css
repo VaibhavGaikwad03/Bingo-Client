@@ -1,0 +1,118 @@
+.chat-sidebar {
+  min-width: 300px;
+  max-width: 450px;
+  border-right: 1px solid #ddd;
+  background-color: #fff;
+  width: 650px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.font_size_cursor {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.img_icon_logo {
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+}
+
+.font_size_cursor {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.message-container {
+  position: relative;
+  display: flex;   
+  max-width: 75%;  
+  margin: 2px 0;
+}
+
+.message-container:hover .message-options-trigger {
+  display: block;
+}
+
+.message-options-menu {
+  position: absolute;
+  top: 22px;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  z-index: 2000;
+  min-width: 140px;
+}
+
+.message-options-menu .dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.message-options-menu .dropdown-item:hover {
+  background: #f8f9fa;
+}
+
+.img_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.img_modal_2 {
+  position: relative;
+  max-width: 400px;
+  max-height: 600px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.chatpage-icon {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.chatpage-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  cursor: pointer;
+  margin-right: 0.2rem;
+}
+
+.suggestion-list {
+  max-height: 360px;
+  overflow-y: auto;
+}
+

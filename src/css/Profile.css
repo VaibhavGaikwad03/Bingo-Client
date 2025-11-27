@@ -1,0 +1,189 @@
+.profile-page {
+  background-color: #fff; 
+  color: #212529; 
+  transition: background-color 0.3s ease, color 0.3s ease;
+  width: 100vw;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+body.dark .profile-page {
+  background-color: #121212; 
+  color: #e0e0e0; 
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  padding: 10px;
+}
+
+.back-arrow {
+  font-size: 1.8rem;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.edit {
+  font-size: 1.8rem;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.form-wrapper {
+  width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.inline-flex {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.form-label-custom {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  width: 100%;
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+body.dark .form-label-custom {
+  color: #e0e0e0; 
+}
+
+.button-row {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.form-label-custom {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  width: 100%;
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+body.dark .form-label-custom {
+  color: #e0e0e0; 
+}
+
+/* Mobile-specific styles - these only affect mobile without changing desktop */
+.profile-page.mobile {
+  padding: 10px 5px;
+}
+
+.container.mobile {
+  padding: 5px;
+}
+
+.back-arrow.mobile {
+  font-size: 1.5rem;
+  top: 5px;
+  left: 5px;
+}
+
+.edit.mobile {
+  font-size: 1.5rem;
+  top: 5px;
+  right: 5px;
+}
+
+.profile-image.mobile {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 15px;
+}
+
+.form-wrapper.mobile {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 10px;
+  gap: 15px;
+}
+
+/* Name fields become vertical on mobile */
+.name-fields-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.name-fields-row.mobile {
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* DOB and Gender become vertical on mobile */
+.dob-gender-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.dob-gender-row.mobile {
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Buttons become full width and stacked on mobile */
+.button-row.mobile {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-row.mobile button {
+  width: 100%;
+}
+
+/* Better form control sizing on mobile */
+.form-wrapper.mobile .form-control,
+.form-wrapper.mobile .form-select {
+  font-size: 16px; /* Prevents zoom on iOS */
+  padding: 12px 10px;
+}
+
+/* Date picker mobile improvements */
+.form-wrapper.mobile .react-datepicker-wrapper {
+  width: 100%;
+}
+
+/* Better spacing for error messages on mobile */
+.form-wrapper.mobile .text-danger {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Ensure labels are properly sized on mobile */
+.form-wrapper.mobile .form-label-custom {
+  font-size: 14px;
+}
+
+/* Improve required star visibility on mobile */
+.form-wrapper.mobile .required-star {
+  font-size: 16px;
+}

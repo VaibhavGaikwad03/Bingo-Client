@@ -1,7 +1,8 @@
+import React from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
 
-export default function HeroAnimation({ NAV_HEIGHT }) {
+export default function HeroAnimation({ NAV_HEIGHT , isMobile }) {
   const hero = useAnimation();
 
   useEffect(() => {
@@ -11,7 +12,7 @@ export default function HeroAnimation({ NAV_HEIGHT }) {
       await hero.start({ scale: 1.02, transition: { duration: 0.5 } });
       await hero.start({
         width: "100%",
-        height: "60vh",
+        height: isMobile ? "50vh" : "60vh" ,
         left: 0,
         top: NAV_HEIGHT,
         x: 0,
@@ -20,7 +21,7 @@ export default function HeroAnimation({ NAV_HEIGHT }) {
         transition: { duration: 0.9, ease: "easeInOut" },
       });
     })();
-  }, [hero, NAV_HEIGHT]);
+  }, [hero, NAV_HEIGHT , isMobile]);
 
   return (
     <motion.section
@@ -67,11 +68,12 @@ export default function HeroAnimation({ NAV_HEIGHT }) {
           textAlign: "center",
           color: "#b30000",
           fontFamily: "serif",
+          padding : isMobile ? "0 10px" : "0 20px",
         }}
       >
         <div
           style={{
-            fontSize: 25,
+            fontSize: isMobile ? 14 : 25,
             letterSpacing: 1,
             marginBottom: 6,
             color: "black",
@@ -81,7 +83,7 @@ export default function HeroAnimation({ NAV_HEIGHT }) {
         </div>
         <h1
           style={{
-            fontSize: "6vw",
+            fontSize: isMobile ? "12vw" : "6vw",
             fontWeight: 600,
             margin: 0,
             letterSpacing: 12,

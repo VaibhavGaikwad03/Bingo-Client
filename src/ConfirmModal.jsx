@@ -1,10 +1,12 @@
 import React from 'react';
-import './CustomAlertModal.css'; // Reusing the same CSS file for consistent styling
+import './css/CustomAlertModal.css'; 
+import { useTranslation } from "react-i18next";
 
 const ConfirmModal = ({ title, message, onConfirm, onCancel }) => {
   if (!message) {
     return null;
   }
+  const { t } = useTranslation();
 
   return (
     <div className="modal-overlay" onClick={onCancel}>
@@ -18,8 +20,8 @@ const ConfirmModal = ({ title, message, onConfirm, onCancel }) => {
         <div className="modal-body">
           <p>{message}</p>
         </div>
-        <div className="modal-footer confirm-footer"> {/* Added a new class for styling the buttons */}
-          <button className="cancel-button" onClick={onCancel}>Cancel</button>
+        <div className="modal-footer confirm-footer"> 
+          <button className="cancel-button" onClick={onCancel}>{t("cancel")}</button>
           <button className="confirm-button" onClick={onConfirm}>Confirm</button>
         </div>
       </div>

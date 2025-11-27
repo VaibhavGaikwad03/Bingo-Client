@@ -1,0 +1,40 @@
+:root {
+  --glow-color: #ff006e;
+}
+
+.dock-container {
+  display: flex;
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.dock-mobile {
+  gap: 15px;
+  padding: 10px;
+}
+
+.dock-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 15px;
+  padding: 10px 20px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--glow-color);
+  white-space: nowrap;
+  min-width: 80px;
+  cursor: pointer;
+}
+
+.dock-btn:hover {
+  transform: scale(var(--magnification, 1.35));
+  box-shadow: 0 0 20px var(--glow-color);
+}

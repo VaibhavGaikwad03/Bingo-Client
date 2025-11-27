@@ -1,0 +1,30 @@
+.signup-outer {
+  position: relative;
+  min-height: 100dvh;
+  width: 100vw;
+  background: linear-gradient(to right, #ffdee9, #ff87a2, #7fa9c9, #4ca1af);
+  margin: 0;
+  overflow-y: auto;
+}
+
+.floating-logo {
+  filter: drop-shadow(0 0 15px #ff00ff);
+  animation: floatLogo 4s ease-in-out infinite;
+}
+
+.form-container{
+  max-width: 500px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  margin-bottom: 40px;
+}
+
+.flex-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+

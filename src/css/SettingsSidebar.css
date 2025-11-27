@@ -1,0 +1,129 @@
+.settings-options, .settings-sidebar {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: 320px;
+  background-color: #fff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  padding: 1.5rem;
+  overflow-y: auto;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-options {
+  right: 0;
+}
+
+body.dark .settings-options, body.dark .settings-sidebar {
+  background-color: #1e1e1e !important;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+  color: #e0e0e0 !important;
+}
+
+.card, .modal-content, .list-group-item, .dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+body.dark .card, body.dark .modal-content, body.dark .list-group-item, body.dark .dropdown-menu {
+  background-color: #1e1e1e;
+  border-color: #343a40;
+  color: #e0e0e0;
+}
+
+body.dark .list-group-item:hover {
+  background-color: #3a3a3a;
+}
+
+.settings-close-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+body.dark .settings-close-icon {
+  color: #e0e0e0 !important;
+}
+
+.icon-size {
+  width: 20px;
+  height: 20px;
+}
+
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 9999;
+  overflow-y: auto;
+  background-color: #fff;
+  color: #212529;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark .mobile-sidebar {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--bs-body-color, #000);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 15px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.back-button::before {
+  content: "←";
+  font-size: 1.3rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.6;
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 38px !important;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid #ddd;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  border-color: #80bdff;
+  background-color: white;
+}

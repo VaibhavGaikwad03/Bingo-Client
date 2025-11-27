@@ -1,69 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Dock from "./Dock";
 import { Link } from "react-router-dom";
+import { useIsMobile } from "./hooks/use-mobile";
+export default function Navbar() {
+  const isMobile = useIsMobile(); 
 
-export default function Navbar(props) {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const linkStyle = {
+    color: "black",
+    textDecoration: "none",
+    textShadow: "none",
+  };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const items = [
-    {
-      label: (
-        <Link
-          to="/"
-          style={{ color: "black", textDecoration: "none", textShadow: "none" }}
-        >
-          Home
-        </Link>
-      ),
-      onClick: () => {},
-    },
-    {
-      label: (
-        <Link
-          to="/login"
-          style={{ color: "black", textShadow: "none", textDecoration: "none" }}
-        >
-          Login
-        </Link>
-      ),
-      onClick: () => {},
-    },
-    {
-      label: (
-        <Link
-          to="/signup"
-          style={{ color: "black", textShadow: "none", textDecoration: "none" }}
-        >
-          Signup
-        </Link>
-      ),
-      onClick: () => {},
-    },
-    {
-      label: (
-        <Link
-          to="/about_us"
-          style={{ color: "black", textShadow: "none", textDecoration: "none" }}
-        >
-          About us
-        </Link>
-      ),
-      onClick: () => {},
-    },
+  const navLinks = [
+    { to: "/", text: "Home" },
+    { to: "/login", text: "Login" },
+    { to: "/signup", text: "Signup" },
+    { to: "/about_us", text: "About us" },
   ];
+
+  const items = navLinks.map(({ to, text }) => ({
+    label: (
+      <Link to={to} style={linkStyle}>
+        {text}
+      </Link>
+    ),
+    onClick: () => {},
+  }));
 
   return (
     <nav
-      className="navbar pb-4 mt-3 p-2 navbar-expand-lg mb-4 fixed-top "
+      className="navbar pb-4 mt-3 p-2 navbar-expand-lg mb-4 fixed-top"
       style={{ background: "#ffc0db" }}
     >
       <div className="container-fluid d-flex flex-wrap align-items-center justify-content-between">
@@ -82,6 +48,7 @@ export default function Navbar(props) {
 
         <Dock
           items={items}
+          isMobile={isMobile}
           panelHeight={isMobile ? 36 : 48}
           baseItemSize={isMobile ? 30 : 38}
           magnification={isMobile ? 35 : 45}

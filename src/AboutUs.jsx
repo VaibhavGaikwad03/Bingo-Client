@@ -1,52 +1,99 @@
 import React from "react";
-import Footer from "./Footer";
 
 export default function AboutUs() {
   return (
     <div
-      className="about-us-page row h-100 w-100 m-0 container-fluid vh-100 vw-100 m-0 p-0 bi-text-left"
+      className="about-us-page d-flex flex-column min-vh-100"
       style={{
         fontFamily: "Arial, sans-serif",
         background:
           "linear-gradient(to right, #ffdee9, #ff87a2, #7fa9c9, #4ca1af)",
       }}
     >
-      {/* <div><img className="img-fluid" src="./images/chatphoto2.png" alt="" /></div> */}
-      <div style={{ padding: "40px 20px", maxWidth: "900px", margin: "auto" }}>
+      <div
+        className="about-us-content container py-5 px-3"
+        style={{
+          maxWidth: "1000px",
+          margin: "auto",
+        }}
+      >
         <h1
-          style={{ fontSize: "2.5rem", marginBottom: "20px", color: "#2e2e2e" }}
+          className="text-center mb-4"
+          style={{
+            fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
+            color: "#2e2e2e",
+          }}
         >
           About Bingo Chat
         </h1>
-        <p style={{ fontSize: "1.1rem", lineHeight: "1.8", color: "#444" }}>
-          Welcome to <strong>Bingo Chat</strong> – where conversations come
-          alive! Our platform is built with the vision to make real-time
-          chatting seamless, secure, and fun.
+
+        <p
+          style={{
+            fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
+            lineHeight: "1.8",
+            color: "#444",
+            textAlign: "justify",
+          }}
+        >
+          Welcome to <strong>Bingo Chat</strong> - where conversations come alive!
+          Our platform is built with the vision to make real-time chatting
+          seamless, secure, and fun.
         </p>
 
         <p
           style={{
-            fontSize: "1.1rem",
+            fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
             lineHeight: "1.8",
             color: "#444",
-            marginTop: "15px",
+            marginTop: "1rem",
+            textAlign: "justify",
           }}
         >
           Whether you're connecting with friends, family, or colleagues, Bingo
           Chat gives you a clean and fast user experience. We believe
-          communication should be easy and enjoyable – and that’s what we
-          deliver.
+          communication should be easy and enjoyable - and that's what we deliver.
         </p>
 
-        <h2 style={{ marginTop: "30px", color: "#2e2e2e" }}>Our Mission</h2>
-        <p style={{ fontSize: "1.1rem", lineHeight: "1.8", color: "#444" }}>
+        <h2
+          className="mt-4"
+          style={{
+            fontSize: "clamp(1.5rem, 3vw, 2rem)",
+            color: "#2e2e2e",
+          }}
+        >
+          Our Mission
+        </h2>
+
+        <p
+          style={{
+            fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
+            lineHeight: "1.8",
+            color: "#444",
+          }}
+        >
           To provide a reliable and user-friendly chat platform that connects
           people across the globe, enabling them to share, collaborate, and
           build communities.
         </p>
 
-        <h2 style={{ marginTop: "30px", color: "#2e2e2e" }}>Why Bingo Chat?</h2>
-        <ul style={{ fontSize: "1.1rem", color: "#444", lineHeight: "1.8" }}>
+        <h2
+          className="mt-4"
+          style={{
+            fontSize: "clamp(1.5rem, 3vw, 2rem)",
+            color: "#2e2e2e",
+          }}
+        >
+          Why Bingo Chat?
+        </h2>
+
+        <ul
+          style={{
+            fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
+            color: "#444",
+            lineHeight: "1.8",
+            paddingLeft: "1.5rem",
+          }}
+        >
           <li>💬 Real-time messaging</li>
           <li>🔒 Privacy-focused design</li>
           <li>🎨 Simple, intuitive interface</li>
@@ -54,7 +101,6 @@ export default function AboutUs() {
         </ul>
       </div>
 
-      <Footer />
     </div>
   );
 }

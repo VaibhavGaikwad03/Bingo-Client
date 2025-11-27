@@ -1,29 +1,36 @@
-import { FriendRequestStatus, MessageTypes } from "./Status_MessageTypes";
+import {
+  FriendRequestStatus,
+  MessageTypes,
+} from "./js_files/Status_MessageTypes";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import "./css/SidebarFriendRequests.css";
+import React from "react";
 
 export default function SidebarFriendRequests(props) {
-  let { friendRequest, setFriendRequest, setShowSidebar, socket } = props;
+  let { friendRequest, setFriendRequest, setShowSidebar, socket, theme } =
+    props;
   let [requestView, setRequestView] = useState("friend_request");
   const timestamp = new Date().toISOString();
+  const { t } = useTranslation();
 
   const calculateDaysAgo = (requestTimestamp) => {
     const requestDate = new Date(requestTimestamp);
-  
     // Handle invalid date input gracefully
     if (isNaN(requestDate.getTime())) {
       return "Invalid Date";
     }
-  
+
     const today = new Date();
     // Set both dates to midnight to ensure accurate day comparison,
     // regardless of the time of day the request was made or the current time.
     requestDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
-  
+
     const diffTime = today.getTime() - requestDate.getTime(); // Direct difference in milliseconds
     const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); // Round to nearest whole day
-  
+
     if (diffDays === 0) {
       return "today";
     } else if (diffDays === 1) {
@@ -38,12 +45,24 @@ export default function SidebarFriendRequests(props) {
   };
   const handleAccept = (req) => {
     console.log(req);
-    // alert(`Accepted request from ${req.sender}`);
-    toast.success(`Accepted request from ${req.sender}`);
+    toast.success(`Accepted request from 
+        ${req.sender}`);
 
     setFriendRequest((prev) =>
       prev.filter((u) => u.sender_id !== req.sender_id)
     );
+
+    if (props.setUserFriendsList) {
+      props.setUserFriendsList((prev) => [
+        ...prev,
+        {
+          user_id: req.sender_id,
+          username: req.sender,
+          fullname: req.name_of_sender,
+          profile_url: req.profile_url || "/images/icons/user.png",
+        },
+      ]);
+    }
 
     const friend_req_status = {
       message_type: MessageTypes.FRIEND_REQ_RESPONSE,
@@ -58,16 +77,15 @@ export default function SidebarFriendRequests(props) {
     };
 
     console.log(friend_req_status);
-    if (socket && socket.readyState === WebSocket.OPEN) { 
+    if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(friend_req_status));
     } else {
       console.error("WebSocket not Connected.");
-      toast.error("Connection not ready. Please try again."); 
+      toast.error("Connection not ready. Please try again.");
     }
   };
 
   const handleDecline = (req) => {
-    // alert(`Declined request from ${req.sender}`);
     toast.error(`Declined request from ${req.sender}`);
 
     setFriendRequest((prev) =>
@@ -87,30 +105,27 @@ export default function SidebarFriendRequests(props) {
     };
 
     console.log(friend_req_status);
-    if (socket && socket.readyState === WebSocket.OPEN) { 
+    if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(friend_req_status));
     } else {
       console.error("WebSocket not Connected");
-      toast.error("Connection not ready. Please try again."); 
-    }  };
+      toast.error("Connection not ready. Please try again.");
+    }
+  };
 
   return (
-    <div className="position-fixed top-0 end-0 bg-white border-start sidebar-friend-requests">
+    <div className="sidebar-friend-requests">
       {requestView == "friend_request" && (
         <>
           <i
-            className="bi bi-x-lg"
-            style={{
-              fontSize: "1.2rem",
-              cursor: "pointer",
-              position: "absolute",
-              top: 20,
-              right: 20,
-            }}
+            className="bi bi-x-lg icon-button"
             onClick={() => setShowSidebar(false)}
           ></i>
 
-          <h5 className="mt-4 mb-3">Friend Requests</h5>
+          <h5 className="mt-4 mb-3">
+            {" "}
+            {t("friendRequests")} ({friendRequest?.length || 0})
+          </h5>
 
           {friendRequest && friendRequest.length > 0 ? (
             friendRequest.map((req, index) => (
@@ -135,8 +150,8 @@ export default function SidebarFriendRequests(props) {
                     </div>
                   )}
                 </div>
-                <div className="d-flex flex-column align-items-end"> 
-                  <div className="d-flex gap-2"> 
+                <div className="d-flex flex-column align-items-end">
+                  <div className="d-flex gap-2">
                     <i
                       className="bi bi-check-circle-fill text-success"
                       style={{ cursor: "pointer", fontSize: "1.2rem" }}
@@ -151,7 +166,10 @@ export default function SidebarFriendRequests(props) {
                     ></i>
                   </div>
                   {req.timestamp && (
-                    <div className="text-muted mt-1" style={{ fontSize: "0.75rem" }}>
+                    <div
+                      className="text-muted mt-1"
+                      style={{ fontSize: "0.75rem" }}
+                    >
                       ({calculateDaysAgo(req.timestamp)})
                     </div>
                   )}
@@ -159,15 +177,8 @@ export default function SidebarFriendRequests(props) {
               </div>
             ))
           ) : (
-            <p className="text-muted mt-3">No pending requests.</p>
+            <p className="text-muted mt-3">{t("noRequests")}</p>
           )}
-
-          {/* <img
-            src="/images/icons/bell.png"
-            alt=""
-            className="bottom-bell"
-            onClick={() => setRequestView("notification")}
-          /> */}
         </>
       )}
 

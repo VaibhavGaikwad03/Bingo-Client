@@ -1,5 +1,5 @@
 import React from 'react';
-import './CustomAlertModal.css'; 
+import './css/CustomAlertModal.css'; 
 
 const CustomAlertModal = ({ title, message, onClose }) => {
   if (!message) { 

@@ -1,20 +1,21 @@
+import React from "react";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./CustomDatePicker.css";
-import { useNavigate } from "react-router-dom";
-import { MessageTypes } from "./Status_MessageTypes";
+import "./css/CustomDatePicker.css";
+import { MessageTypes } from "./js_files/Status_MessageTypes.js";
 import {
   validateUsername,
   validatePassword,
-  validateName,
   validateEmail,
   validatePhone,
   validateDOB,
-} from "./Validations.js";
+} from "./js_files/Validations.js";
+import "./css/Signup.css";
 
 export default function Signup(props) {
-  const { message, setMessage, socket, timestamp } = props;
+  const {navigate, message, setMessage, socket, timestamp, isMobile } = props;
+
   const [signupform, setSignupform] = useState({});
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -22,7 +23,6 @@ export default function Signup(props) {
   const [dobError, setDobError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   function handleButtonCancel() {
@@ -38,20 +38,27 @@ export default function Signup(props) {
     navigate("/login");
   }
 
+  // validates, handles signupform and sends details to server
   function handleSignupFormSubmit(event) {
     event.preventDefault();
     clearMessage();
 
     const usernameValidation = validateUsername(signupform.username);
     const passwordValidation = validatePassword(signupform.password);
-    const nameValidation = validateName(signupform.fullname);
+
+    const fullName = signupform.fullname || "";
+    if (fullName.trim() === "") {
+      setFullNameError("Full name is required.");
+    } else {
+      setFullNameError("");
+    }
+
     const emailValidation = validateEmail(signupform.email);
     const phoneValidation = validatePhone(signupform.phone);
     const dobValidation = validateDOB(signupform.dob);
 
     setUsernameError(usernameValidation.error);
     setPasswordError(passwordValidation.error);
-    setFullNameError(nameValidation.error);
     setEmailError(emailValidation.error);
     setPhoneError(phoneValidation.error);
     setDobError(dobValidation.error);
@@ -64,7 +71,7 @@ export default function Signup(props) {
     const formIsValid =
       !usernameValidation.error &&
       !passwordValidation.error &&
-      !nameValidation.error &&
+      fullName.trim() !== "" &&
       !emailValidation.error &&
       !phoneValidation.error &&
       !dobValidation.error &&
@@ -79,8 +86,10 @@ export default function Signup(props) {
       const signupData = {
         message_type: MessageTypes.SIGN_UP_REQUEST,
         ...signupform,
+        fullname: fullName.trim(),
         timestamp,
       };
+
       socket.send(JSON.stringify(signupData));
       console.log(signupData);
     } else {
@@ -100,6 +109,7 @@ export default function Signup(props) {
   function handleTextChange(eventOrName, value) {
     let name, inputValue;
 
+    // Get input name and value - handles both event and manual call
     if (typeof eventOrName === "object" && eventOrName.target) {
       name = eventOrName.target.name;
       inputValue = eventOrName.target.value;
@@ -110,7 +120,6 @@ export default function Signup(props) {
 
     setSignupform((prevForm) => {
       const updatedForm = { ...prevForm, [name]: inputValue };
-
       clearMessage();
 
       switch (name) {
@@ -119,11 +128,12 @@ export default function Signup(props) {
           setUsernameError(error);
           return { ...prevForm, username: newValue };
         }
+
         case "fullname": {
-          const { value, error } = validateName(inputValue);
-          setFullNameError(error);
-          return { ...prevForm, fullname: value };
+          setFullNameError(inputValue.trim() === "" ? "Full name is required." : "");
+          break;
         }
+
         case "email": {
           const { error } = validateEmail(inputValue);
           setEmailError(error);
@@ -157,28 +167,19 @@ export default function Signup(props) {
 
   return (
     <div
-      className="d-flex flex-column justify-content-center align-items-center"
+      className="signup-outer d-flex flex-column justify-content-start align-items-center"
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background:
-          "linear-gradient(to right, #ffdee9, #ff87a2, #7fa9c9, #4ca1af)",
-        margin: 0,
-        overflow: "auto",
+        paddingTop: isMobile ? "env(safe-area-inset-top, 20px)" : "40px",
       }}
     >
       <div className="mb-3">
         <img
-          className="img-fluid mt-3"
+          className="img-fluid mt-3 floating-logo"
           src="./images/BingoLogo.png"
           alt="chatlogo"
           style={{
-            maxHeight: "120px",
-            filter: "drop-shadow(0 0 15px #ff00ff)",
-            animation: "floatLogo 4s ease-in-out infinite",
+            maxHeight: isMobile ? "80px" : "120px",
+            width: "auto",
           }}
         />
       </div>
@@ -186,13 +187,8 @@ export default function Signup(props) {
       <div
         className="p-4 form-container"
         style={{
-          width: "90%",
-          maxWidth: "500px",
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          borderRadius: "15px",
-          boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255, 255, 255, 0.18)",
+          width: isMobile ? "95%" : "90%",
+          padding: isMobile ? "1rem" : "1.5rem",
         }}
       >
         <h3 className="text-center text-primary mb-4">SIGNUP</h3>
@@ -205,7 +201,8 @@ export default function Signup(props) {
         <form onSubmit={handleSignupFormSubmit}>
           <div className="pb-1 mb-3">
             <div className="d-flex align-items-center border-bottom">
-              <i className="bi bi-person-circle me-3 fs-4"></i>
+              <i className="bi bi-person-circle fs-4"></i>
+              <span className="required-star me-2">*</span>
               <input
                 className="form-control border-0 mb-2"
                 type="text"
@@ -231,7 +228,8 @@ export default function Signup(props) {
 
           <div className="pb-1 mb-3">
             <div className="d-flex align-items-center border-bottom">
-              <i className="bi bi-lock-fill me-3 fs-4"></i>
+              <i className="bi bi-lock-fill fs-4"></i>
+              <span className="required-star me-2">*</span>
               <input
                 className="form-control border-0"
                 type={showPassword ? "text" : "password"}
@@ -263,18 +261,21 @@ export default function Signup(props) {
 
           <div className="pb-1 mb-3">
             <div className="d-flex align-items-center border-bottom">
-              <i className="bi bi-person-vcard-fill me-3 fs-4"></i>
+              <i className="bi bi-person-vcard-fill fs-4"></i>
+              <span className="required-star me-2">*</span>
+
               <input
-                className="form-control border-0"
                 type="text"
                 name="fullname"
+                className="form-control border-0"
                 autoComplete="off"
                 value={signupform.fullname || ""}
                 onChange={handleTextChange}
-                placeholder="Enter your Full name"
+                placeholder="Full Name"
                 required
               />
             </div>
+
             {fullNameError && (
               <div className="ms-5 text-danger">
                 <em>{fullNameError}</em>
@@ -284,7 +285,8 @@ export default function Signup(props) {
 
           <div className="pb-1 mb-3">
             <div className="d-flex align-items-center border-bottom">
-              <i className="bi bi-calendar-date me-3 fs-4"></i>
+              <i className="bi bi-calendar-date fs-4"></i>
+              <span className="required-star me-2">*</span>
               <DatePicker
                 selected={signupform.dob ? new Date(signupform.dob) : null}
                 onChange={(date) => {
@@ -315,7 +317,8 @@ export default function Signup(props) {
 
           <div className="pb-1 mb-3">
             <div className="d-flex align-items-center border-bottom">
-              <i className="bi bi-envelope-at-fill me-3 fs-4"></i>
+              <i className="bi bi-envelope-at-fill fs-4 "></i>
+              <span className="required-star me-2">*</span>
               <input
                 className="form-control border-0 mb-2"
                 type="email"
@@ -341,7 +344,9 @@ export default function Signup(props) {
 
           <div className="pb-1 mb-3">
             <div className="d-flex align-items-center border-bottom">
-              <i className="bi bi-telephone-fill me-3 fs-4"></i>
+              <i className="bi bi-telephone-fill fs-4"></i>
+              <span className="required-star me-2">*</span>
+
               <input
                 className="form-control border-0 mb-2"
                 type="tel"
@@ -367,7 +372,7 @@ export default function Signup(props) {
 
           <div className="mb-4 d-flex ps-5 ms-4 align-items-center me-1 fw-bold flex-wrap">
             <label className="m-1">
-              Gender :
+              Gender :<span className="required-star me-2">*</span>
               <input
                 onChange={handleTextChange}
                 className="m-1"
@@ -403,7 +408,15 @@ export default function Signup(props) {
             </label>
           </div>
 
-          <div className="text-center">
+          <div
+            className="text-center"
+            style={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? "10px" : "0",
+              justifyContent: "center",
+            }}
+          >
             <input
               type="submit"
               value="Signup"
