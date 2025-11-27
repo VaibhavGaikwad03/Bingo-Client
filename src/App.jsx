@@ -115,8 +115,8 @@ function App() {
 
   // main use effect for communication with server
   useEffect(() => {
-    newSocket.current = new WebSocket("ws://localhost:2121");
-    //  newSocket.current = new WebSocket("https://c3966023db2d.ngrok-free.app");
+    // newSocket.current = new WebSocket("ws://localhost:2121");
+     newSocket.current = new WebSocket("https://06a899bf63e5.ngrok-free.app/");
 
     newSocket.current.onopen = () => {
       setSocketMessage("Connected!");
