@@ -3,10 +3,10 @@ import './css/CustomAlertModal.css';
 import { useTranslation } from "react-i18next";
 
 const ConfirmModal = ({ title, message, onConfirm, onCancel }) => {
+  const { t } = useTranslation();
   if (!message) {
     return null;
   }
-  const { t } = useTranslation();
 
   return (
     <div className="modal-overlay" onClick={onCancel}>

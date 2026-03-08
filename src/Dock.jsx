@@ -5,6 +5,7 @@ const glowColor = "#ff006e";
 
 export default function Dock({
   items,
+  // eslint-disable-next-line no-unused-vars
   panelHeight,
   baseItemSize,
   magnification,

@@ -9,6 +9,7 @@ import "./css/SidebarFriendRequests.css";
 import React from "react";
 
 export default function SidebarFriendRequests(props) {
+  // eslint-disable-next-line no-unused-vars
   let { friendRequest, setFriendRequest, setShowSidebar, socket, theme } =
     props;
   let [requestView, setRequestView] = useState("friend_request");

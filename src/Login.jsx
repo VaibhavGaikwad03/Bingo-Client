@@ -12,9 +12,12 @@ export default function Login(props) {
     setMessage,
     socket,
     timestamp,
+    // eslint-disable-next-line no-unused-vars
     setCurrentUsername,
     isMobile,
+    // eslint-disable-next-line no-unused-vars
     setIsActive,
+    // eslint-disable-next-line no-unused-vars
     isActive,
   } = props;
   const [loginform, setLoginform] = useState({});
@@ -197,16 +200,24 @@ export default function Login(props) {
                 )}
               </div>
 
-              <div className="text-center">
+              <div
+                className="text-center"
+                style={{
+                  display: "flex",
+                  flexDirection: isMobile ? "column" : "row",
+                  gap: "10px",
+                  justifyContent: "center",
+                }}
+              >
                 <input
                   type="submit"
                   value="Login"
-                  className="btn btn-success me-3"
+                  className="btn btn-success btn-sm"
                 />
                 <input
                   type="button"
                   value="Cancel"
-                  className="btn btn-danger"
+                  className="btn btn-danger btn-sm"
                   onClick={handleButtonCancel}
                 />
               </div>

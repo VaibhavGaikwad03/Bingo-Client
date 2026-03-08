@@ -14,6 +14,7 @@ export default function ChangePassword({
   message,
   currentUserId,
   socket,
+  // eslint-disable-next-line no-unused-vars
   theme
 }) {
   const [oldPass, setOldPass] = useState("");
@@ -36,6 +37,7 @@ export default function ChangePassword({
     if (message) {
       clearMessage();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message]);
 
   const handleSubmit = (e) => {

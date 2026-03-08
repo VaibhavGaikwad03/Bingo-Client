@@ -6,7 +6,8 @@ import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import AboutUs from "./AboutUs";
 import Login from "./Login";
 import { Status, MessageTypes } from "./js_files/Status_MessageTypes";
-import {
+import
+{
   LoginErrorCodes,
   SignupErrorCodes,
   ChangePasswordErrorCodes,
@@ -17,14 +18,17 @@ import Chatpage from "./Chatpage";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import CustomAlertModal from "./CustomAlertModal";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NewGroup from "./NewGroup";
 
-function RequireAuth({ isAuth, children }) {
+function RequireAuth({ isAuth, children })
+{
   return isAuth ? children : <Navigate to="/login" replace />;
 }
 
-function App() {
+function App()
+{
   const newSocket = useRef(null);
   const [socket, setSocket] = useState(null);
   const [socketMessage, setSocketMessage] = useState("");
@@ -38,22 +42,26 @@ function App() {
   let [suggestions, setSuggestions] = useState([]);
 
   // usestate for users friend list
-  let [userFriendsList, setUserFriendsList] = useState(() => {
+  let [userFriendsList, setUserFriendsList] = useState(() =>
+  {
     const storedUserFriendsList = localStorage.getItem("userFriendsList");
     return storedUserFriendsList ? JSON.parse(storedUserFriendsList) : [];
   });
 
-  let [friendRequest, setFriendRequest] = useState(() => {
+  let [friendRequest, setFriendRequest] = useState(() =>
+  {
     const storedFriendRequest = localStorage.getItem("friendRequest");
     return storedFriendRequest ? JSON.parse(storedFriendRequest) : [];
   });
 
   //get theme from localstorage
-  const [theme, setTheme] = useState(() => {
+  const [theme, setTheme] = useState(() =>
+  {
     return localStorage.getItem("theme") || "light";
   });
   //set theme in localstorage
-  useEffect(() => {
+  useEffect(() =>
+  {
     document.body.className = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
@@ -62,9 +70,7 @@ function App() {
   const timestamp = new Date().toISOString();
 
   // for checking if user is authenticate or not
-  const [isAuth, setIsAuth] = useState(
-    () => localStorage.getItem("isAuth") === "true"
-  );
+  const [isAuth, setIsAuth] = useState(() => localStorage.getItem("isAuth") === "true");
 
   // Initialize user data from localStorage
   const [currentUserId, setCurrentUserId] = useState(
@@ -78,30 +84,38 @@ function App() {
   );
 
   // Save updated user info to localStorage whenever it changes
-  useEffect(() => {
-    if (currentUsername !== "") {
+  useEffect(() =>
+  {
+    if (currentUsername !== "")
+    {
       localStorage.setItem("currentUsername", currentUsername);
     }
   }, [currentUsername]);
-  useEffect(() => {
-    if (currentUsername !== "") {
+  useEffect(() =>
+  {
+    if (currentUsername !== "")
+    {
       localStorage.setItem("currentUsername", currentUsername);
     }
   }, [currentUsername]);
 
-  useEffect(() => {
-    if (currentNameOfUser !== "") {
+  useEffect(() =>
+  {
+    if (currentNameOfUser !== "")
+    {
       localStorage.setItem("currentNameOfUser", currentNameOfUser);
     }
   }, [currentNameOfUser]);
 
   // clears the message after 2 seconds
-  function clearMessage() {
+  function clearMessage()
+  {
     setTimeout(() => setMessage(""), 2000);
   }
 
   // profile informartion of user
-  const [userProfileInfo, setUserProfileInfo] = useState(() => {
+  const [userProfileInfo, setUserProfileInfo] = useState(() =>
+  {
     const storedUserProfileInfo = localStorage.getItem("userProfileInfo");
     return storedUserProfileInfo ? JSON.parse(storedUserProfileInfo) : {};
   });
@@ -113,18 +127,29 @@ function App() {
   // active status
   let [isActive, setIsActive] = useState(false);
 
-  // main use effect for communication with server
-  useEffect(() => {
-    // newSocket.current = new WebSocket("ws://localhost:2121");
-     newSocket.current = new WebSocket("https://06a899bf63e5.ngrok-free.app/");
+  // for opening and closing profile picture
+  let [showImageModal, setShowImageModal] = useState(false);
 
-    newSocket.current.onopen = () => {
+  // storing unique id for each chat message
+  let [responseId, setResponseId] = useState(-1);
+
+  let [chatMessage, setChatMessage] = useState({});
+
+  // main use effect for communication with server
+  useEffect(() =>
+  {
+    newSocket.current = new WebSocket("ws://localhost:2121");
+    //  newSocket.current = new WebSocket("https://1f3b-103-198-165-137.ngrok-free.app");
+
+    newSocket.current.onopen = () =>
+    {
       setSocketMessage("Connected!");
       console.log("Connected to server");
 
       // 2 nd scenario
       const token = localStorage.getItem("auth_token");
-      if (isAuth) {
+      if (isAuth)
+      {
         console.log("Session found, sending RECONNECT_REQUEST...");
         const reconnectRequest = {
           message_type: MessageTypes.RECONNECT_REQUEST,
@@ -137,13 +162,16 @@ function App() {
       }
     };
 
-    newSocket.current.onmessage = (event) => {
+    newSocket.current.onmessage = (event) =>
+    {
       const parsedData = JSON.parse(event.data);
 
-      switch (parsedData.message_type) {
+      switch (parsedData.message_type)
+      {
         case MessageTypes.LOGIN_RESPONSE:
           {
-            if (parsedData.status === Status.SUCCESS) {
+            if (parsedData.status === Status.SUCCESS)
+            {
               console.log("Received from Server:", parsedData);
               setCurrentUserId(parsedData.user_id);
               setMessage("Login Successfull");
@@ -157,14 +185,17 @@ function App() {
 
               clearMessage();
               navigate("/chatpage");
-            } else if (parsedData.status === Status.ERROR) {
+            } else if (parsedData.status === Status.ERROR)
+            {
               if (
                 parsedData.error_code === LoginErrorCodes.USERNAME_NOT_FOUND
-              ) {
+              )
+              {
                 setMessage("Username does not Exist");
               } else if (
                 parsedData.error_code === LoginErrorCodes.PASSWORD_IS_INCORRECT
-              ) {
+              )
+              {
                 setMessage("Incorrect Password");
               }
             }
@@ -173,25 +204,31 @@ function App() {
 
         case MessageTypes.SIGN_UP_RESPONSE:
           {
-            if (parsedData.status === Status.SUCCESS) {
+            if (parsedData.status === Status.SUCCESS)
+            {
               setMessage("Signup Successfull");
-              setTimeout(() => {
+              setTimeout(() =>
+              {
                 navigate("/login");
                 setMessage("");
               }, 2000);
-            } else if (parsedData.status === Status.ERROR) {
+            } else if (parsedData.status === Status.ERROR)
+            {
               if (
                 parsedData.error_code ===
                 SignupErrorCodes.USERNAME_ALREADY_EXISTS
-              ) {
+              )
+              {
                 setMessage("Username already exists!");
               } else if (
                 parsedData.error_code === SignupErrorCodes.EMAIL_ALREADY_EXISTS
-              ) {
+              )
+              {
                 setMessage("Email already exists!");
               } else if (
                 parsedData.error_code === SignupErrorCodes.PHONE_ALREADY_EXISTS
-              ) {
+              )
+              {
                 setMessage("Phone already exists!");
               }
             }
@@ -201,7 +238,8 @@ function App() {
         case MessageTypes.LOGOUT_RESPONSE:
           {
             console.log(parsedData, "Logout response");
-            if (parsedData.status === Status.SUCCESS) {
+            if (parsedData.status === Status.SUCCESS)
+            {
               setCurrentUserId(-1);
               setCurrentUsername("");
               setCurrentNameOfUser("");
@@ -223,7 +261,8 @@ function App() {
               setModalAlerErrorMessage("");
               setTheme("light");
               navigate("/");
-            } else if (parsedData.status === Status.ERROR) {
+            } else if (parsedData.status === Status.ERROR)
+            {
               setModalAlerErrorMessage(
                 "An error occurred while logging out. Please try again."
               );
@@ -241,11 +280,13 @@ function App() {
         case MessageTypes.FRIEND_REQ_REQUEST:
           {
             console.log(parsedData, "friend req request");
-            setFriendRequest((prev) => {
+            setFriendRequest((prev) =>
+            {
               const isAlreadyThere = prev.some(
                 (req) => req.sender_id === parsedData.sender_id
               );
-              if (isAlreadyThere) {
+              if (isAlreadyThere)
+              {
                 console.log(
                   "Friend request already exists, not adding duplicate."
                 );
@@ -286,13 +327,16 @@ function App() {
 
         case MessageTypes.CHANGE_PASSWORD_RESPONSE:
           {
-            if (parsedData.status == Status.SUCCESS) {
+            if (parsedData.status == Status.SUCCESS)
+            {
               setMessage("Password changed successfully!");
-            } else if (parsedData.status == Status.ERROR) {
+            } else if (parsedData.status == Status.ERROR)
+            {
               if (
                 parsedData.error_code ==
                 ChangePasswordErrorCodes.NEW_PASSWORD_MUST_BE_DIFFERENT
-              ) {
+              )
+              {
                 setMessage("New Password must be Different!");
               }
             }
@@ -300,14 +344,16 @@ function App() {
           break;
 
         case MessageTypes.RECONNECT_RESPONSE: {
-          if (parsedData.status === Status.SUCCESS) {
+          if (parsedData.status === Status.SUCCESS)
+          {
             localStorage.setItem("isAuth", "true");
             localStorage.setItem("currentUserId", parsedData.user_id);
             localStorage.setItem("auth_token", parsedData.auth_token);
             setSocketMessage("Connected!");
             navigate("/chatpage");
             setIsAuth(true);
-          } else if (parsedData.status === Status.ERROR) {
+          } else if (parsedData.status === Status.ERROR)
+          {
             setMessage("Session expired. Please login again.");
             setIsAuth(false);
             navigate("/login");
@@ -316,11 +362,25 @@ function App() {
         }
 
         case MessageTypes.UPDATE_PROFILE_RESPONSE: {
-          if (parsedData.status === Status.SUCCESS) {
+          if (parsedData.status === Status.SUCCESS)
+          {
             toast.success("Profile updated successfully!");
-          } else if (parsedData.status === Status.ERROR) {
+          } else if (parsedData.status === Status.ERROR)
+          {
             toast.error("Profile update failed!");
           }
+          break;
+        }
+
+        case MessageTypes.GET_CHAT_MESSAGE_ID_RESPONSE: {
+          setResponseId(parsedData.chat_message_id); // change it after checking backend
+          console.log("message id: ", parsedData.chat_message_id)
+          break;
+        }
+
+        case MessageTypes.CHAT_MESSAGE: {
+          console.log("Chat message parsed data: ", parsedData);
+          setChatMessage(parsedData);
           break;
         }
 
@@ -332,50 +392,57 @@ function App() {
       }
     };
 
-    newSocket.current.onclose = () => {
+    newSocket.current.onclose = () =>
+    {
       setSocketMessage("Disconnected!");
       console.log("Connection closed");
     };
 
-    newSocket.current.onerror = (error) => {
+    newSocket.current.onerror = (error) =>
+    {
       console.error("WebSocket error:", error);
       setSocketMessage("Disconnected!");
     };
 
     setSocket(newSocket.current);
 
-    return () => {
+    return () =>
+    {
       if (newSocket.current) newSocket.current.close();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleCloseErrorModal = () => {
+  const handleCloseErrorModal = () =>
+  {
     setShowAlertErrorModal(false);
     setModalAlerErrorMessage("");
   };
 
-// Add this to your App.js
-useEffect(() => {
-  const handleTabClose = () => {
-    localStorage.setItem("isActive", "false");
-  };
+  // Add this to your App.js
+  useEffect(() =>
+  {
+    const handleTabClose = () =>
+    {
+      localStorage.setItem("isActive", "false");
+    };
 
-  window.addEventListener('beforeunload', handleTabClose);
-  
-  return () => {
-    window.removeEventListener('beforeunload', handleTabClose);
-  };
-}, []);
+    window.addEventListener("beforeunload", handleTabClose);
+
+    return () =>
+    {
+      window.removeEventListener("beforeunload", handleTabClose);
+    };
+  }, []);
 
   return (
     <>
       {socketMessage && (
         <div
-          className={`status-indicator ${
-            socketMessage === "Connected!"
-              ? "status-connected"
-              : "status-disconnected"
-          }`}
+          className={`status-indicator ${socketMessage === "Connected!"
+            ? "status-connected"
+            : "status-disconnected"
+            }`}
         >
           <span style={{ fontSize: "0.5rem", marginRight: 6 }}>
             {socketMessage === "Connected!" ? "🟢" : "🔴"}
@@ -440,6 +507,10 @@ useEffect(() => {
                 setSuggestions={setSuggestions}
                 suggestions={suggestions}
                 navigate={navigate}
+                setShowImageModal={setShowImageModal}
+                showImageModal={showImageModal}
+                responseId={responseId}
+                chatMessage={chatMessage}
               />
             </RequireAuth>
           }
@@ -456,6 +527,8 @@ useEffect(() => {
                 currentUserId={currentUserId}
                 socket={socket}
                 setMessage={setMessage}
+                setShowImageModal={setShowImageModal}
+                showImageModal={showImageModal}
               />
             </RequireAuth>
           }
@@ -476,6 +549,19 @@ useEffect(() => {
                 navigate={navigate}
               />
             </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/NewGroup"
+          element={
+            <NewGroup
+              friendsList={
+                userFriendsList.length
+                  ? userFriendsList
+                  : JSON.parse(localStorage.getItem("friendsList")) || []
+              }
+            />
           }
         />
       </Routes>

@@ -7,6 +7,7 @@ import HeroAnimation from "./HeroAnimation";
 
 export default function Homepage() {
   const isMobile = useIsMobile();
+  // eslint-disable-next-line no-unused-vars
   const [animationKey, setAnimationKey] = useState(0);
   const NAV_HEIGHT = isMobile ? 200 : 350;
   return (

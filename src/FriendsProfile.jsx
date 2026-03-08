@@ -98,7 +98,7 @@ export default function FriendsProfile(props) {
                   alt="Block"
                   className="icon-20 me-3"
                 />
-                {t("block")} {selectedFriend?.fullname}
+                {t("block")} 
               </li>
 
               <li className="text-danger d-flex align-items-center mb-3 clickable p-2 rounded">
@@ -107,7 +107,7 @@ export default function FriendsProfile(props) {
                   alt="Report"
                   className="icon-20 me-3"
                 />
-                {t("report")} {selectedFriend?.fullname}
+                {t("report")} 
               </li>
             </ul>
           </div>

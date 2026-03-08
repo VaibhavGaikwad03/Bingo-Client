@@ -14,7 +14,7 @@ import {
 import "./css/Signup.css";
 
 export default function Signup(props) {
-  const {navigate, message, setMessage, socket, timestamp, isMobile } = props;
+  const { navigate, message, setMessage, socket, timestamp, isMobile } = props;
 
   const [signupform, setSignupform] = useState({});
   const [usernameError, setUsernameError] = useState("");
@@ -130,7 +130,9 @@ export default function Signup(props) {
         }
 
         case "fullname": {
-          setFullNameError(inputValue.trim() === "" ? "Full name is required." : "");
+          setFullNameError(
+            inputValue.trim() === "" ? "Full name is required." : ""
+          );
           break;
         }
 
@@ -413,21 +415,21 @@ export default function Signup(props) {
             style={{
               display: "flex",
               flexDirection: isMobile ? "column" : "row",
-              gap: isMobile ? "10px" : "0",
+              gap: "10px",
               justifyContent: "center",
             }}
           >
-            <input
-              type="submit"
-              value="Signup"
-              className="btn btn-success me-3"
-            />
-            <input
+            <button type="submit" className="btn btn-success btn-sm">
+              Signup
+            </button>
+
+            <button
               type="button"
-              value="Cancel"
-              className="btn btn-danger"
+              className="btn btn-danger btn-sm"
               onClick={handleButtonCancel}
-            />
+            >
+              Cancel
+            </button>
           </div>
 
           <div className="mt-3 text-center">

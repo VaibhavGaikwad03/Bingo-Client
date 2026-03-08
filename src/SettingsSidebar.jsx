@@ -3,14 +3,20 @@ import { MessageTypes } from "./js_files/Status_MessageTypes";
 import ConfirmModal from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "./hooks/use-mobile";
-import "./css/SettingsSidebar.css"
+import "./css/SettingsSidebar.css";
+import FriendsList from "./FriendsList";
+
 export default function SettingsSidebar({
   navigate,
   currentUserId,
   currentUsername,
   socket,
   onClose,
-  theme
+  setShowRightSidebarFriendList,
+  showRightSidebarFriendList,
+  setTheme,
+  theme,
+  userFriendsList
 }) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { t } = useTranslation();
@@ -31,25 +37,17 @@ export default function SettingsSidebar({
   };
 
   const sidebarItems = [
-    // {
-    //   key: "profile",
-    //   labelKey: "Profile",
-    //   iconSrc: "/images/icons/user.png",
-    //   alt: "profile",
-    //   onClick: () => navigate("/profile"),
-    //   className: isMobile ? "list-group-item-action" : "",
-    // },
     {
-      key: "profile",
-      labelKey: "Friend List",
+      key: "friendList",
+      labelKey: "friendList",
       iconSrc: "/images/icons/bff.png",
-      alt: "profile",
-      onClick: () => navigate("/profile"),
+      alt: "Friend List",
+      onClick: () => setShowRightSidebarFriendList(true),
       className: isMobile ? "list-group-item-action" : "",
     },
     {
       key: "settings",
-      labelKey: "Settings",
+      labelKey: "settings",
       iconSrc: "/images/icons/setting.png",
       alt: "settings",
       onClick: () => navigate("/settings"),
@@ -57,7 +55,7 @@ export default function SettingsSidebar({
     },
     {
       key: "logout",
-      labelKey: "Logout",
+      labelKey: "logout",
       iconSrc: "/images/icons/logout.png",
       alt: "logout",
       onClick: () => setShowLogoutConfirm(true),
@@ -99,6 +97,37 @@ export default function SettingsSidebar({
 
         <ul className="list-group">{sidebarItems.map(renderListItem)}</ul>
         {confirmModal}
+        {showRightSidebarFriendList && (
+          <div
+            className={`position-fixed top-0 end-0 h-100 shadow bg-${
+              theme === "dark" ? "dark text-light" : "white"
+            }`}
+            style={{
+              width: isMobile ? "100%" : "320px",
+              zIndex: 9999,
+              transition: "transform 0.3s ease-in-out",
+            }}
+          >
+            <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
+              <h5 className="m-0">Friend List</h5>
+              <button
+                className="btn btn-link text-danger"
+                onClick={() => setShowRightSidebarFriendList(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-3 overflow-auto h-100">
+              <FriendsList
+                navigate={navigate}
+                theme={theme}
+                setTheme={setTheme}
+                onClose={() => setShowRightSidebarFriendList(false)}
+                userFriendsList ={userFriendsList}
+              />
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -117,6 +146,37 @@ export default function SettingsSidebar({
         })}
       </ul>
       {confirmModal}
+      {showRightSidebarFriendList && (
+        <div
+          className={`position-fixed top-0 end-0 h-100 shadow bg-${
+            theme === "dark" ? "dark text-light" : "white"
+          }`}
+          style={{
+            width: isMobile ? "100%" : "320px",
+            zIndex: 9999,
+            transition: "transform 0.3s ease-in-out",
+          }}
+        >
+          <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 className="m-0">Friend List</h5>
+            <button
+              className="btn btn-link text-danger"
+              onClick={() => setShowRightSidebarFriendList(false)}
+            >
+              ✕
+            </button>
+          </div>
+          <div className="p-3 overflow-auto h-100">
+            <FriendsList
+              navigate={navigate}
+              theme={theme}
+              setTheme={setTheme}
+              onClose={() => setShowRightSidebarFriendList(false)}
+              userFriendsList={userFriendsList}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

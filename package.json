@@ -17,6 +17,7 @@
     "axios": "^1.9.0",
     "bootstrap-icons": "^1.13.1",
     "drei": "^2.2.21",
+    "emoji-picker-react": "^4.16.1",
     "framer-motion": "^12.18.1",
     "i18next": "^25.5.2",
     "lucide-react": "^0.526.0",

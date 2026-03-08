@@ -4,45 +4,45 @@ import { useIsMobile } from "./hooks/use-mobile";
 import { useState } from "react";
 import "./css/SettingsSidebar.css";
 
-export default function FriendsList({ onClose }) {
+export default function FriendsList({ onClose, userFriendsList }) {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [search, setSearch] = useState("");
 
-  const friendRequest = [
-    {
-      sender: "john123",
-      name_of_sender: "John Mathew",
-      profile_url: "/images/good_baby_pfp.jpeg",
-    },
-    {
-      sender: "rutuja_d",
-      name_of_sender: "Rutuja Dabhade",
-      profile_url: "/images/good_baby_pfp.jpeg",
-    },
-    {
-      sender: "harsh_09",
-      name_of_sender: "Harsh Patil",
-      profile_url: "/images/good_baby_pfp.jpeg",
-    },
-    {
-      sender: "neha_07",
-      name_of_sender: "Neha Sharma",
-      profile_url: "/images/good_baby_pfp.jpeg",
-    },
-  ];
+  // const userFriendsList = [
+  //   {
+  //     username: "john123",
+  //     fullname: "John Mathew",
+  //     profile_url: "/images/good_baby_pfp.jpeg",
+  //   },
+  //   {
+  //     username: "rutuja_d",
+  //     fullname: "Rutuja Dabhade",
+  //     profile_url: "/images/good_baby_pfp.jpeg",
+  //   },
+  //   {
+  //     username: "harsh_09",
+  //     fullname: "Harsh Patil",
+  //     profile_url: "/images/good_baby_pfp.jpeg",
+  //   },
+  //   {
+  //     username: "neha_07",
+  //     fullname: "Neha Sharma",
+  //     profile_url: "/images/good_baby_pfp.jpeg",
+  //   },
+  // ];
 
-  const sortedFriends = [...friendRequest].sort((a, b) =>
-    a.name_of_sender.localeCompare(b.name_of_sender)
+  const sortedFriends = [...userFriendsList ].sort((a, b) =>
+    a.fullname.localeCompare(b.fullname)
   );
 
   const filteredFriends = sortedFriends.filter(
     (u) =>
-      u.name_of_sender.toLowerCase().includes(search.toLowerCase()) ||
-      u.sender.toLowerCase().includes(search.toLowerCase())
+      u.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      u.username.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalFriends = friendRequest.length;
+  const totalFriends = userFriendsList .length;
 
   if (isMobile) {
     return (
@@ -70,14 +70,14 @@ export default function FriendsList({ onClose }) {
           />
         </div>
 
-        {friendRequest.length > 0 ? (
+        {userFriendsList .length > 0 ? (
           filteredFriends.map((req, index) => (
             <div
               key={index}
               className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom"
             >
               <img
-                src={req.profile_url || "/images/icons/user.png"}
+                src={req.profile_url || "/images/good_baby_pfp.jpeg"}
                 alt="profile"
                 className="rounded-circle"
                 style={{
@@ -88,9 +88,9 @@ export default function FriendsList({ onClose }) {
               />
 
               <div className="flex-grow-1 ms-3">
-                <div className="fw-semibold">{req.name_of_sender}</div>
+                <div className="fw-semibold">{req.fullname}</div>
                 <div className="text-muted" style={{ fontSize: "0.85rem" }}>
-                  @{req.sender}
+                  @{req.username}
                 </div>
               </div>
             </div>
@@ -122,14 +122,14 @@ export default function FriendsList({ onClose }) {
         />
       </div>
 
-      {friendRequest.length > 0 ? (
+      {userFriendsList .length > 0 ? (
         filteredFriends.map((req, index) => (
           <div
             key={index}
             className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom"
           >
             <img
-              src={req.profile_url || "/images/icons/user.png"}
+              src={req.profile_url || "/images/good_baby_pfp.jpeg"}
               alt="profile"
               className="rounded-circle"
               style={{
@@ -140,9 +140,9 @@ export default function FriendsList({ onClose }) {
             />
 
             <div className="flex-grow-1 ms-3">
-              <div className="fw-semibold">{req.name_of_sender}</div>
+              <div className="fw-semibold">{req.fullname}</div>
               <div className="text-muted" style={{ fontSize: "0.85rem" }}>
-                @{req.sender}
+                @{req.username}
               </div>
             </div>
           </div>

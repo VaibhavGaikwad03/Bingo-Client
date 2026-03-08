@@ -4,7 +4,6 @@ import Appearance from "./Appearance";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "./hooks/use-mobile"; // Assuming the hook is correctly imported
 import "./css/SettingsSidebar.css";
-import { href } from "react-router-dom";
 
 export default function Settings({
   setMessage,

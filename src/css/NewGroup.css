@@ -1,0 +1,133 @@
+.newgroup-sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 450px; 
+  z-index: 1050;
+  background: var(--bg, #fff);
+  border-right: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0,0,0,0.06);
+}
+
+.ng-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ng-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ng-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+.ng-close {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.ng-body {
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ng-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.08);
+  margin-bottom: 10px;
+}
+
+.ng-selected-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ng-chip {
+  background: rgba(0,0,0,0.06);
+  padding: 4px 8px;
+  border-radius: 14px;
+  font-size: 0.85rem;
+}
+
+.ng-search {
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.ng-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ng-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ng-list-item:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.ng-list-item.selected {
+  background: rgba(0,123,255,0.08);
+}
+
+.ng-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ng-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.ng-name {
+  font-weight: 600;
+}
+
+.ng-desc {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.ng-check input {
+  width: 16px;
+  height: 16px;
+}
+
+.ng-footer {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  justify-content: flex-end;
+}
+

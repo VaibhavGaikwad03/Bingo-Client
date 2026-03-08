@@ -30,5 +30,29 @@ export const MessageTypes = {
     UPDATE_PROFILE_REQUEST : 119,
     UPDATE_PROFILE_RESPONSE: 120,
     TOKEN_LOGIN_REQUEST: 121,
-    TOKEN_LOGIN_RESPONSE: 122
+    TOKEN_LOGIN_RESPONSE: 122,
+    CHAT_MESSAGE : 124,
+    GET_CHAT_MESSAGE_ID_REQUEST : 125,
+    GET_CHAT_MESSAGE_ID_RESPONSE : 126
+}
+
+export const ConversationTypes = {
+    PERSONAL : 0,
+    GROUP : 1,
+    BROADCAST : 2
+}
+
+export const ContentTypes = {
+    TEXT : 0 ,
+    IMAGE : 1,
+    VIDEO : 2,
+    FILE : 3,
+    AUDIO : 4,
+    POLL : 5
+}
+
+export const MessageStatus = {
+    SENT : 0,
+    DELIVERED : 1,
+    READ : 2
 }

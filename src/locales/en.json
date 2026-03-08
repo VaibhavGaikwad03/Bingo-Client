@@ -56,5 +56,14 @@
   "noFriends": "No friends found",
   "about" : "About",
   "clearChat": "Clear chat",
-  "friendList": "Friend List"
+  "friendList": "Friend List",
+  "starred" : "Starred",
+  "copy" : "Copy",
+  "delete": "Delete",
+  "forward" : "Forward",
+  "unpin" : "Unpin",
+  "pin" : "Pin",
+  "star" : "Star", 
+  "unstar": "Unstar",
+  "reply" : "Reply"
 }
