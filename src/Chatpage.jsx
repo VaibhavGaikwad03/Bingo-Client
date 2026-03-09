@@ -1648,7 +1648,15 @@ export default function Chatpage(props)
               }}
               ref={messagesRef}
             >
-              {messagesState.map((message, index) => (
+              {messagesState
+                .filter(
+                  (message) =>
+                    (message.sender_id === currentUserId &&
+                      message.receiver_id === selectedFriend.user_id) ||
+                    (message.sender_id === selectedFriend.user_id &&
+                      message.receiver_id === currentUserId)
+                )
+                .map((message, index) => (
                 <div
                   key={message.chat_message_id}
                   className={`message-container ${message.sender_id === currentUserId
