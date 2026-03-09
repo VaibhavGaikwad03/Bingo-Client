@@ -46,6 +46,7 @@ export default function Chatpage(props)
     responseId,
     // eslint-disable-next-line no-unused-vars
     chatMessage,
+    messageHistory,
   } = props;
 
   const isMobile = useIsMobile();
@@ -422,6 +423,38 @@ export default function Chatpage(props)
       isPinned: false,
     },
   ]);
+
+  useEffect(() =>
+  {
+    if (messageHistory && messageHistory.length > 0)
+    {
+      const formattedHistory = messageHistory.map((msg) => ({
+        chat_message_id: msg.message_id || msg.chat_message_id,
+        sender_id: msg.sender_id,
+        receiver_id: msg.receiver_id,
+        content: msg.content,
+        content_type: msg.content_type !== undefined ? msg.content_type : ContentTypes.TEXT,
+        message_status: msg.message_status !== undefined ? msg.message_status : MessageStatus.SENT,
+        is_reply_message: msg.is_reply_message || 0,
+        replied_message_id: msg.replied_message_id || -1,
+        timestamp: msg.timestamp,
+        isSent: msg.sender_id === currentUserId,
+        isStared: false,
+        isPinned: false,
+      }));
+
+      setMessagesState((prev) =>
+      {
+        const existingIds = new Set(prev.map((m) => m.chat_message_id));
+        const newMessages = formattedHistory.filter(
+          (m) => !existingIds.has(m.chat_message_id)
+        );
+        // Combine and sort by timestamp
+        const combined = [...prev, ...newMessages];
+        return combined.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      });
+    }
+  }, [messageHistory, currentUserId]);
 
   function selectAllMessages()
   {

@@ -134,6 +134,7 @@ function App()
   let [responseId, setResponseId] = useState(-1);
 
   let [chatMessage, setChatMessage] = useState({});
+  let [messageHistory, setMessageHistory] = useState([]);
 
   // main use effect for communication with server
   useEffect(() =>
@@ -322,6 +323,8 @@ function App()
         case MessageTypes.USER_MESSAGE_HISTORY:
           {
             console.log(parsedData, "user msg history");
+            const messagesArray = parsedData.chat_history_list || parsedData.chat_messages || parsedData.messages || parsedData.message_history || parsedData.user_message_history || [];
+            setMessageHistory(messagesArray);
           }
           break;
 
@@ -511,6 +514,7 @@ function App()
                 showImageModal={showImageModal}
                 responseId={responseId}
                 chatMessage={chatMessage}
+                messageHistory={messageHistory}
               />
             </RequireAuth>
           }
