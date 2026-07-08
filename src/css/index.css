@@ -1,0 +1,265 @@
+/* ═══════════════════════════════════════════════════════════════
+   BINGO CHAT — Design System
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── CSS Custom Properties ──────────────────────────────────── */
+:root {
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 30px rgba(108, 99, 255, 0.15);
+}
+
+/* ── Dark Theme (default) ────────────────────────────────── */
+[data-theme="dark"] {
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #111128;
+  --bg-tertiary: #1a1a3e;
+  --bg-card: rgba(20, 20, 50, 0.7);
+  --bg-glass: rgba(25, 25, 60, 0.5);
+  --bg-glass-hover: rgba(35, 35, 80, 0.6);
+  --bg-input: rgba(30, 30, 70, 0.5);
+
+  --border-color: rgba(108, 99, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+
+  --text-primary: #f0f0ff;
+  --text-secondary: #a0a0c0;
+  --text-muted: #6a6a8e;
+  --text-inverse: #0a0a1a;
+
+  --accent-primary: #6C63FF;
+  --accent-secondary: #00D2FF;
+  --accent-gradient: linear-gradient(135deg, #6C63FF 0%, #00D2FF 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #7d75ff 0%, #33ddff 100%);
+
+  --success: #00E676;
+  --error: #FF5252;
+  --warning: #FFD740;
+  --info: #40C4FF;
+
+  --msg-sent-bg: linear-gradient(135deg, #6C63FF 0%, #5a52e0 100%);
+  --msg-sent-text: #ffffff;
+  --msg-received-bg: rgba(30, 30, 70, 0.6);
+  --msg-received-text: #f0f0ff;
+
+  --sidebar-bg: rgba(15, 15, 35, 0.95);
+  --chat-bg: #0d0d22;
+}
+
+/* ── Light Theme ──────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-primary: #f5f5ff;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eeeef8;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.6);
+  --bg-glass-hover: rgba(255, 255, 255, 0.8);
+  --bg-input: rgba(240, 240, 255, 0.8);
+
+  --border-color: rgba(108, 99, 255, 0.15);
+  --border-subtle: rgba(0, 0, 0, 0.06);
+
+  --text-primary: #1a1a2e;
+  --text-secondary: #555580;
+  --text-muted: #8e8eb0;
+  --text-inverse: #ffffff;
+
+  --accent-primary: #6C63FF;
+  --accent-secondary: #00B8D4;
+  --accent-gradient: linear-gradient(135deg, #6C63FF 0%, #00B8D4 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #7d75ff 0%, #33ccee 100%);
+
+  --success: #00C853;
+  --error: #FF1744;
+  --warning: #FFAB00;
+  --info: #00B0FF;
+
+  --msg-sent-bg: linear-gradient(135deg, #6C63FF 0%, #5a52e0 100%);
+  --msg-sent-text: #ffffff;
+  --msg-received-bg: rgba(240, 240, 255, 0.9);
+  --msg-received-text: #1a1a2e;
+
+  --sidebar-bg: rgba(255, 255, 255, 0.98);
+  --chat-bg: #f0f0fa;
+}
+
+/* ── Global Reset ──────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover {
+  color: var(--accent-secondary);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+input {
+  font-family: inherit;
+  color: var(--text-primary);
+  outline: none;
+  border: none;
+  background: none;
+}
+
+input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Scrollbar Styling ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* ── Utility Classes ───────────────────────────────────────── */
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.avatar-sm {
+  width: 36px;
+  height: 36px;
+  font-size: 0.75rem;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+.icon-btn:hover {
+  background: var(--bg-glass-hover);
+  color: var(--accent-primary);
+}
+
+.icon-btn-sm {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+.icon-btn-sm:hover {
+  color: var(--text-primary);
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--error);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-error {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
