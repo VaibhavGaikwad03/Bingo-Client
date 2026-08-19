@@ -48,7 +48,7 @@ export default function ChatLayout() {
         ) : (
           <div className="chat-empty">
             <div className="chat-empty-content">
-              <div className="empty-icon">💬</div>
+              <img src="/logo.png?v=2" alt="Bingo Logo" className="chat-empty-logo" />
               <h2>Welcome to Bingo</h2>
               <p>Select a conversation to start chatting</p>
             </div>

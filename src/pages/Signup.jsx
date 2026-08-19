@@ -109,9 +109,7 @@ export default function Signup() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div className="auth-logo">
-          <div className="logo-icon">
-            <MessageCircle size={28} />
-          </div>
+          <img src="/logo.png?v=2" alt="Bingo Logo" className="auth-logo-img" />
           <h1>Create Account</h1>
           <p className="auth-subtitle">Join the conversation</p>
         </div>

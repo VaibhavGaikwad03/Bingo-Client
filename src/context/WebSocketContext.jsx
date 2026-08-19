@@ -61,7 +61,7 @@ export function WebSocketProvider({ children }) {
   }, [currentUserId, sendMessage]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:2121');
+    const ws = new WebSocket(import.meta.env.VITE_WS_URL || 'ws://92.4.78.71:2121');
     wsRef.current = ws;
 
     ws.onopen = () => {

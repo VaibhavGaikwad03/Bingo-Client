@@ -55,9 +55,7 @@ export default function Login() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div className="auth-logo">
-          <div className="logo-icon">
-            <MessageCircle size={32} />
-          </div>
+          <img src="/logo.png?v=2" alt="Bingo Logo" className="auth-logo-img" />
           <h1>Bingo</h1>
           <p className="auth-subtitle">Welcome back! Sign in to continue</p>
         </div>
