@@ -61,7 +61,16 @@ export function WebSocketProvider({ children }) {
   }, [currentUserId, sendMessage]);
 
   useEffect(() => {
-    const ws = new WebSocket(import.meta.env.VITE_WS_URL || 'ws://92.4.78.71:2121');
+    let ws;
+    try {
+      ws = new WebSocket(import.meta.env.VITE_WS_URL || 'ws://92.4.78.71:2121');
+    } catch (err) {
+      // e.g. an insecure ws:// URL from an HTTPS page throws SecurityError.
+      // Don't let it crash the whole app to a blank screen.
+      console.error('WebSocket connection failed:', err);
+      setConnected(false);
+      return;
+    }
     wsRef.current = ws;
 
     ws.onopen = () => {
